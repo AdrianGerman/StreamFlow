@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  /* ── Tokens base ── */
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
@@ -9,13 +10,29 @@
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
-  --heading: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+
+  /* ── Tokens StreamFlow ── */
+  --sf-bg: #f4f4f0;
+  --sf-col-bg: #ededea;
+  --sf-green: #1d9e75;
+  --sf-green-dim: #e1f5ee;
+
+  /* Columnas */
+  --sf-inbox-bg: #eaeae4;
+  --sf-inbox-text: #3a3a36;
+  --sf-ideas-bg: #daeafa;
+  --sf-ideas-text: #0d3a5c;
+  --sf-edit-bg: #c8f0e0;
+  --sf-edit-text: #0a3d2e;
+  --sf-shorts-bg: #fad6e4;
+  --sf-shorts-text: #5c0d2a;
+  --sf-trash-bg: #fae0d4;
+  --sf-trash-text: #5c2010;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -26,10 +43,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,13 +55,24 @@
     --accent: #c084fc;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+    --sf-bg: #1a1a1f;
+    --sf-col-bg: #22222a;
+    --sf-green: #1d9e75;
+    --sf-green-dim: #0a2e22;
+
+    --sf-inbox-bg: #2a2a2e;
+    --sf-inbox-text: #c0c0b8;
+    --sf-ideas-bg: #0d2035;
+    --sf-ideas-text: #7ab8e8;
+    --sf-edit-bg: #0a2820;
+    --sf-edit-text: #5dcea0;
+    --sf-shorts-bg: #2e0d1a;
+    --sf-shorts-text: #e87aaa;
+    --sf-trash-bg: #2e1a0d;
+    --sf-trash-text: #e8a07a;
   }
 }
 
@@ -57,14 +81,13 @@ body {
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  color: white;
-  border-inline: 1px solid var(--border);
+  margin: 0;
+  text-align: left;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  border-inline: none;
 }
