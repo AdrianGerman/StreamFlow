@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
-import { COLUMN_IDS } from "../constants/columns"
+import { STORE_KEYS } from "../constants/nav"
 
 const STORAGE_KEY = "streamflow:vods"
 
@@ -23,8 +23,7 @@ function saveToStorage(state) {
 function buildInitialState() {
   const saved = loadFromStorage()
   if (saved) return saved
-
-  return Object.fromEntries(COLUMN_IDS.map((id) => [id, []]))
+  return Object.fromEntries(STORE_KEYS.map((id) => [id, []]))
 }
 
 function generateId() {
@@ -51,43 +50,36 @@ export function createVod({
 }
 
 export function useVodStore() {
-  const [columns, setColumns] = useState(buildInitialState)
+  const [buckets, setBuckets] = useState(buildInitialState)
 
   useEffect(() => {
-    saveToStorage(columns)
-  }, [columns])
+    saveToStorage(buckets)
+  }, [buckets])
 
-  const addVod = useCallback((columnId, vodData) => {
+  const addVod = useCallback((bucketId, vodData) => {
     const vod = createVod(vodData)
-    setColumns((prev) => ({
-      ...prev,
-      [columnId]: [...prev[columnId], vod],
-    }))
+    setBuckets((prev) => ({ ...prev, [bucketId]: [...prev[bucketId], vod] }))
     return vod
   }, [])
 
-  const moveVod = useCallback((vodId, fromColumnId, toColumnId) => {
-    setColumns((prev) => {
-      const vod = prev[fromColumnId]?.find((v) => v.id === vodId)
+  const moveVod = useCallback((vodId, fromId, toId) => {
+    setBuckets((prev) => {
+      const vod = prev[fromId]?.find((v) => v.id === vodId)
       if (!vod) return prev
-
-      const updatedVod =
-        toColumnId === "editing" && fromColumnId !== "editing"
-          ? { ...vod, phase: 1 }
-          : vod
-
+      const updated =
+        toId === "editing" && fromId !== "editing" ? { ...vod, phase: 1 } : vod
       return {
         ...prev,
-        [fromColumnId]: prev[fromColumnId].filter((v) => v.id !== vodId),
-        [toColumnId]: [...prev[toColumnId], updatedVod],
+        [fromId]: prev[fromId].filter((v) => v.id !== vodId),
+        [toId]: [...prev[toId], updated],
       }
     })
   }, [])
 
-  const updateVod = useCallback((columnId, vodId, changes) => {
-    setColumns((prev) => ({
+  const updateVod = useCallback((bucketId, vodId, changes) => {
+    setBuckets((prev) => ({
       ...prev,
-      [columnId]: prev[columnId].map((v) =>
+      [bucketId]: prev[bucketId].map((v) =>
         v.id === vodId ? { ...v, ...changes } : v,
       ),
     }))
@@ -109,24 +101,24 @@ export function useVodStore() {
     [updateVod],
   )
 
-  const removeVod = useCallback((columnId, vodId) => {
-    setColumns((prev) => ({
+  const removeVod = useCallback((bucketId, vodId) => {
+    setBuckets((prev) => ({
       ...prev,
-      [columnId]: prev[columnId].filter((v) => v.id !== vodId),
+      [bucketId]: prev[bucketId].filter((v) => v.id !== vodId),
     }))
   }, [])
 
-  const reorderVods = useCallback((columnId, fromIndex, toIndex) => {
-    setColumns((prev) => {
-      const list = [...prev[columnId]]
+  const reorderVods = useCallback((bucketId, fromIndex, toIndex) => {
+    setBuckets((prev) => {
+      const list = [...prev[bucketId]]
       const [moved] = list.splice(fromIndex, 1)
       list.splice(toIndex, 0, moved)
-      return { ...prev, [columnId]: list }
+      return { ...prev, [bucketId]: list }
     })
   }, [])
 
   return {
-    columns,
+    buckets,
     addVod,
     moveVod,
     updateVod,
