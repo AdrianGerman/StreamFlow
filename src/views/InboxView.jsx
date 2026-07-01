@@ -15,7 +15,7 @@ export default function InboxView({ buckets, addVod, moveVod, removeVod }) {
   const vods = buckets.inbox ?? []
 
   return (
-    <div className="p-5 max-w-2xl">
+    <div className="contents">
       <ViewHeader
         title="VODs sin clasificar"
         sub="Streams descargados que todavía no clasificaste."
@@ -25,7 +25,7 @@ export default function InboxView({ buckets, addVod, moveVod, removeVod }) {
 
       {vods.length === 0 ? (
         <EmptyState
-          text="No hay VODs sin clasificar. ¡Agregá uno para empezar!"
+          text="No hay VODs sin clasificar. ¡Agrega uno para empezar!"
           onAdd={() => setShowModal(true)}
         />
       ) : (

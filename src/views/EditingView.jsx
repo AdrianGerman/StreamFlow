@@ -21,10 +21,10 @@ export default function EditingView({
   const vods = buckets.editing ?? []
 
   return (
-    <div className="p-5 max-w-2xl">
+    <div className="contents">
       <ViewHeader
         title="En edición"
-        sub="Videos activamente en proceso. Avanzá las fases a medida que editás."
+        sub="Videos activamente en proceso. Avanza las fases a medida que editas."
         count={vods.length}
         onAdd={() => setShowModal(true)}
       />
@@ -53,7 +53,7 @@ export default function EditingView({
 
       {vods.length === 0 ? (
         <EmptyState
-          text="Sin videos en edición. Mové una idea cuando estés listo para editar."
+          text="Sin videos en edición. Move una idea cuando estés listo para editar."
           onAdd={() => setShowModal(true)}
         />
       ) : (

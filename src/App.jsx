@@ -153,7 +153,9 @@ export default function App() {
         })}
       </nav>
 
-      <main className="flex-1 overflow-y-auto">{view()}</main>
+      <main className="flex-1 overflow-y-auto">
+        <div className="w-full max-w-5xl mx-auto px-6 py-6">{view()}</div>
+      </main>
     </div>
   )
 }

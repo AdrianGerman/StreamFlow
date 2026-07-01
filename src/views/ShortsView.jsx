@@ -10,16 +10,16 @@ export default function ShortsView({ buckets, addVod, moveVod, removeVod }) {
   const vods = buckets.shorts ?? []
 
   return (
-    <div className="p-5 max-w-2xl">
+    <div className="contents">
       <ViewHeader
         title="Pool de shorts"
-        sub="Videos terminados. Extraé los mejores momentos para shorts y TikToks."
+        sub="Videos terminados. Extrae los mejores momentos para shorts y TikToks."
         count={vods.length}
         onAdd={() => setShowModal(true)}
       />
 
       {vods.length === 0 ? (
-        <EmptyState text="Sin videos en el pool. Cuando terminés de editar un video, movelो acá para extraer clips." />
+        <EmptyState text="Sin videos en el pool. Cuando termines de editar un video, move acá para extraer clips." />
       ) : (
         <div className="flex flex-col gap-2.5">
           {vods.map((vod) => (

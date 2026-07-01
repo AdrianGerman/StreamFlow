@@ -24,7 +24,7 @@ export default function IdeasView({ buckets, addVod, moveVod, removeVod }) {
     filter === "all" ? vods : vods.filter((v) => v.tags?.includes(filter))
 
   return (
-    <div className="p-5 max-w-2xl">
+    <div className="contents">
       <ViewHeader
         title="Ideas de contenido"
         sub="VODs con potencial para video largo, shorts o TikToks."
@@ -54,7 +54,7 @@ export default function IdeasView({ buckets, addVod, moveVod, removeVod }) {
         <EmptyState
           text={
             filter === "all"
-              ? "Sin ideas todavía. Mové un VOD desde el inbox."
+              ? "Sin ideas todavía. Move un VOD desde el inbox."
               : `Sin VODs con tag "${FILTERS.find((f) => f.id === filter)?.label}".`
           }
           onAdd={filter === "all" ? () => setShowModal(true) : null}

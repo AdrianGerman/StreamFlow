@@ -5,10 +5,10 @@ export default function TrashView({ buckets, removeVod }) {
   const vods = buckets.trash ?? []
 
   return (
-    <div className="p-5 max-w-2xl">
+    <div className="contents">
       <ViewHeader
         title="Listo para borrar"
-        sub="VODs con el ciclo completo. Borrá los archivos originales para liberar espacio."
+        sub="VODs con el ciclo completo. Borra los archivos originales para liberar espacio."
         count={vods.length}
       />
 
@@ -21,7 +21,7 @@ export default function TrashView({ buckets, removeVod }) {
             style={{ background: "#fae0d4", color: "#5c2010" }}
           >
             <i className="ti ti-alert-triangle text-sm" aria-hidden="true" />
-            Estos VODs ya fueron procesados. Podés borrar los archivos
+            Estos VODs ya fueron procesados. Podes borrar los archivos
             originales de tu PC con seguridad.
           </div>
           <div className="flex flex-col gap-2.5">
