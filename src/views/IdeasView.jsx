@@ -1,7 +1,5 @@
 import { useState } from "react"
-import VodCard from "../components/VodCard"
-import AddVodModal from "../components/AddVodModal"
-import { ViewHeader, EmptyState } from "./InboxView"
+import BucketView from "../components/BucketView"
 
 const DESTINATIONS = [
   { id: "editing", label: "Edición" },
@@ -16,22 +14,30 @@ const FILTERS = [
 ]
 
 export default function IdeasView({ buckets, addVod, moveVod, removeVod }) {
-  const [showModal, setShowModal] = useState(false)
   const [filter, setFilter] = useState("all")
   const vods = buckets.ideas ?? []
 
   const filtered =
     filter === "all" ? vods : vods.filter((v) => v.tags?.includes(filter))
 
-  return (
-    <div className="contents">
-      <ViewHeader
-        title="Ideas de contenido"
-        sub="VODs con potencial para video largo, shorts o TikToks."
-        count={vods.length}
-        onAdd={() => setShowModal(true)}
-      />
+  const activeFilter = FILTERS.find((f) => f.id === filter)
 
+  return (
+    <BucketView
+      bucketId="ideas"
+      title="Ideas de contenido"
+      sub="VODs con potencial para video largo, shorts o TikToks."
+      emptyText={
+        filter === "all"
+          ? "Sin ideas todavía. Mueve un VOD desde el inbox."
+          : `Sin VODs con el tipo "${activeFilter?.label}".`
+      }
+      vods={filtered}
+      destinations={DESTINATIONS}
+      onAdd={(data) => addVod("ideas", data)}
+      onMove={moveVod}
+      onRemove={removeVod}
+    >
       <div className="flex gap-2 mb-4 flex-wrap">
         {FILTERS.map((f) => (
           <button
@@ -49,41 +55,6 @@ export default function IdeasView({ buckets, addVod, moveVod, removeVod }) {
           </button>
         ))}
       </div>
-
-      {filtered.length === 0 ? (
-        <EmptyState
-          text={
-            filter === "all"
-              ? "Sin ideas todavía. Move un VOD desde el inbox."
-              : `Sin VODs con tag "${FILTERS.find((f) => f.id === filter)?.label}".`
-          }
-          onAdd={filter === "all" ? () => setShowModal(true) : null}
-        />
-      ) : (
-        <div className="flex flex-col gap-2.5">
-          {filtered.map((vod) => (
-            <VodCard
-              key={vod.id}
-              vod={vod}
-              bucketId="ideas"
-              destinations={DESTINATIONS}
-              onMove={moveVod}
-              onRemove={removeVod}
-            />
-          ))}
-        </div>
-      )}
-
-      {showModal && (
-        <AddVodModal
-          bucketLabel="Ideas de contenido"
-          onAdd={(data) => {
-            addVod("ideas", data)
-            setShowModal(false)
-          }}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-    </div>
+    </BucketView>
   )
 }
