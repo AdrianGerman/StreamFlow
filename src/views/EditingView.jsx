@@ -1,7 +1,4 @@
-import { useState } from "react"
-import VodCard from "../components/VodCard"
-import AddVodModal from "../components/AddVodModal"
-import { ViewHeader, EmptyState } from "./InboxView"
+import BucketView from "../components/BucketView"
 import { PHASES, TOTAL_PHASES } from "../constants/phases"
 
 const DESTINATIONS = [
@@ -17,18 +14,20 @@ export default function EditingView({
   regressPhase,
   removeVod,
 }) {
-  const [showModal, setShowModal] = useState(false)
-  const vods = buckets.editing ?? []
-
   return (
-    <div className="contents">
-      <ViewHeader
-        title="En edición"
-        sub="Videos activamente en proceso. Avanza las fases a medida que editas."
-        count={vods.length}
-        onAdd={() => setShowModal(true)}
-      />
-
+    <BucketView
+      bucketId="editing"
+      title="En edición"
+      sub="Videos en proceso de edición. Avanza las fases a medida que editas."
+      emptyText="Sin videos en edición. Mueve una idea cuando estés listo para editar."
+      vods={buckets.editing ?? []}
+      destinations={DESTINATIONS}
+      onAdd={(data) => addVod("editing", data)}
+      onMove={moveVod}
+      onRemove={removeVod}
+      onAdvance={(vodId, phase) => advancePhase(vodId, phase, TOTAL_PHASES)}
+      onRegress={regressPhase}
+    >
       <div className="flex gap-2 mb-5 flex-wrap">
         {PHASES.map((p) => (
           <div
@@ -50,41 +49,6 @@ export default function EditingView({
           </div>
         ))}
       </div>
-
-      {vods.length === 0 ? (
-        <EmptyState
-          text="Sin videos en edición. Move una idea cuando estés listo para editar."
-          onAdd={() => setShowModal(true)}
-        />
-      ) : (
-        <div className="flex flex-col gap-2.5">
-          {vods.map((vod) => (
-            <VodCard
-              key={vod.id}
-              vod={vod}
-              bucketId="editing"
-              destinations={DESTINATIONS}
-              onMove={moveVod}
-              onRemove={removeVod}
-              onAdvance={(vodId, phase) =>
-                advancePhase(vodId, phase, TOTAL_PHASES)
-              }
-              onRegress={regressPhase}
-            />
-          ))}
-        </div>
-      )}
-
-      {showModal && (
-        <AddVodModal
-          bucketLabel="Edición"
-          onAdd={(data) => {
-            addVod("editing", data)
-            setShowModal(false)
-          }}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-    </div>
+    </BucketView>
   )
 }
