@@ -7,19 +7,32 @@ export default function VodCard({
   bucketId,
   destinations,
   onMove,
+  onEdit,
   onAdvance,
   onRegress,
   onRemove,
 }) {
   const [hovered, setHovered] = useState(false)
+  const [confirming, setConfirming] = useState(false)
 
   const isEditing = bucketId === "editing"
   const isTrash = bucketId === "trash"
 
+  const handleRemove = () => {
+    if (!confirming) {
+      setConfirming(true)
+      return
+    }
+    onRemove(bucketId, vod.id)
+  }
+
   return (
     <div
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseLeave={() => {
+        setHovered(false)
+        setConfirming(false)
+      }}
       className="rounded-xl px-3.5 py-3 transition-all duration-150"
       style={{
         background: "var(--bg)",
@@ -66,45 +79,55 @@ export default function VodCard({
         />
       )}
 
-      {hovered && !isTrash && destinations.length > 0 && (
+      {hovered && !isTrash && (
         <div
-          className="flex gap-1.5 flex-wrap mt-3 pt-2.5"
+          className="flex items-center gap-1.5 flex-wrap mt-3 pt-2.5"
           style={{ borderTop: "1px solid var(--border)" }}
         >
-          <span
-            className="text-[10px] self-center mr-1"
-            style={{ color: "var(--text)" }}
-          >
-            Mover a:
-          </span>
-          {destinations.map((dest) => (
-            <MoveBtn
-              key={dest.id}
-              label={dest.label}
-              onClick={() => onMove(vod.id, bucketId, dest.id)}
-            />
-          ))}
-          <div className="ml-auto">
-            <RemoveBtn onClick={() => onRemove(bucketId, vod.id)} />
+          {destinations.length > 0 && (
+            <>
+              <span className="text-[10px]" style={{ color: "var(--text)" }}>
+                Mover a:
+              </span>
+              {destinations.map((dest) => (
+                <MoveBtn
+                  key={dest.id}
+                  label={dest.label}
+                  onClick={() => onMove(vod.id, bucketId, dest.id)}
+                />
+              ))}
+            </>
+          )}
+          <div className="ml-auto flex gap-1.5">
+            {onEdit && <EditBtn onClick={onEdit} />}
+            <RemoveBtn confirming={confirming} onClick={handleRemove} />
           </div>
         </div>
       )}
 
-      {isTrash && hovered && (
+      {hovered && isTrash && (
         <div
           className="mt-2.5 pt-2.5"
           style={{ borderTop: "1px solid var(--border)" }}
         >
           <button
-            onClick={() => onRemove(bucketId, vod.id)}
-            className="w-full text-[11px] font-semibold py-1.5 rounded-lg cursor-pointer border transition-colors duration-150 hover:opacity-80"
-            style={{
-              background: "#fdf0ee",
-              color: "#c0392b",
-              borderColor: "#c0392b22",
-            }}
+            onClick={handleRemove}
+            className="w-full text-[11px] font-semibold py-1.5 rounded-lg cursor-pointer border transition-all duration-150"
+            style={
+              confirming
+                ? {
+                    background: "#c0392b",
+                    color: "#fff",
+                    borderColor: "transparent",
+                  }
+                : {
+                    background: "#fdf0ee",
+                    color: "#c0392b",
+                    borderColor: "#c0392b22",
+                  }
+            }
           >
-            Eliminar de StreamFlow
+            {confirming ? "¿Confirmar eliminación?" : "Eliminar de StreamFlow"}
           </button>
         </div>
       )}
@@ -140,18 +163,38 @@ function MoveBtn({ label, onClick }) {
   )
 }
 
-function RemoveBtn({ onClick }) {
+function EditBtn({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-colors duration-100 hover:bg-[#fdf0ee] hover:text-[#c0392b] hover:border-[#c0392b44]"
+      className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-colors duration-100 hover:bg-(--code-bg)"
       style={{
         borderColor: "var(--border)",
         color: "var(--text)",
         background: "var(--bg)",
       }}
     >
-      ✕ Quitar
+      ✎ Editar
+    </button>
+  )
+}
+
+function RemoveBtn({ confirming, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-all duration-150"
+      style={
+        confirming
+          ? { background: "#c0392b", color: "#fff", borderColor: "transparent" }
+          : {
+              borderColor: "var(--border)",
+              color: "var(--text)",
+              background: "var(--bg)",
+            }
+      }
+    >
+      {confirming ? "¿Confirmar?" : "✕ Quitar"}
     </button>
   )
 }
