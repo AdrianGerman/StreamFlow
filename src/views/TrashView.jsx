@@ -1,6 +1,6 @@
 import BucketView from "../components/BucketView"
 
-export default function TrashView({ buckets, removeVod }) {
+export default function TrashView({ buckets, updateVod, removeVod }) {
   return (
     <BucketView
       bucketId="trash"
@@ -11,6 +11,7 @@ export default function TrashView({ buckets, removeVod }) {
       destinations={[]}
       canAdd={false}
       onAdd={null}
+      onUpdate={updateVod}
       onMove={() => {}}
       onRemove={removeVod}
     >

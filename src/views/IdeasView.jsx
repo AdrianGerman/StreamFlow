@@ -13,7 +13,13 @@ const FILTERS = [
   { id: "tiktok", label: "TikTok" },
 ]
 
-export default function IdeasView({ buckets, addVod, moveVod, removeVod }) {
+export default function IdeasView({
+  buckets,
+  addVod,
+  updateVod,
+  moveVod,
+  removeVod,
+}) {
   const [filter, setFilter] = useState("all")
   const vods = buckets.ideas ?? []
 
@@ -34,6 +40,7 @@ export default function IdeasView({ buckets, addVod, moveVod, removeVod }) {
       }
       vods={filtered}
       destinations={DESTINATIONS}
+      onUpdate={updateVod}
       onAdd={(data) => addVod("ideas", data)}
       onMove={moveVod}
       onRemove={removeVod}

@@ -9,6 +9,7 @@ const DESTINATIONS = [
 export default function EditingView({
   buckets,
   addVod,
+  updateVod,
   moveVod,
   advancePhase,
   regressPhase,
@@ -22,6 +23,7 @@ export default function EditingView({
       emptyText="Sin videos en edición. Mueve una idea cuando estés listo para editar."
       vods={buckets.editing ?? []}
       destinations={DESTINATIONS}
+      onUpdate={updateVod}
       onAdd={(data) => addVod("editing", data)}
       onMove={moveVod}
       onRemove={removeVod}
