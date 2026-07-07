@@ -2,7 +2,7 @@ import { useState } from "react"
 import ViewHeader from "./ViewHeader"
 import EmptyState from "./EmptyState"
 import VodCard from "./VodCard"
-import AddVodModal from "./AddVodModal"
+import VodModal from "./VodModal"
 
 export default function BucketView({
   bucketId,
@@ -13,17 +13,25 @@ export default function BucketView({
   destinations,
   canAdd = true,
   onAdd,
+  onUpdate = null,
   onMove,
   onRemove,
   onAdvance = null,
   onRegress = null,
   children,
 }) {
-  const [showModal, setShowModal] = useState(false)
+  const [showCreate, setShowCreate] = useState(false)
+  const [editing, setEditing] = useState(null)
 
-  const handleAdd = (data) => {
+  const handleCreate = (data) => {
     onAdd(data)
-    setShowModal(false)
+    setShowCreate(false)
+  }
+
+  const handleUpdate = (data) => {
+    if (!editing) return
+    onUpdate(bucketId, editing.id, data)
+    setEditing(null)
   }
 
   return (
@@ -32,7 +40,7 @@ export default function BucketView({
         title={title}
         sub={sub}
         count={vods.length}
-        onAdd={canAdd ? () => setShowModal(true) : null}
+        onAdd={canAdd ? () => setShowCreate(true) : null}
       />
 
       {children}
@@ -40,7 +48,7 @@ export default function BucketView({
       {vods.length === 0 ? (
         <EmptyState
           text={emptyText}
-          onAdd={canAdd ? () => setShowModal(true) : null}
+          onAdd={canAdd ? () => setShowCreate(true) : null}
         />
       ) : (
         <div className="flex flex-col gap-2.5">
@@ -52,6 +60,7 @@ export default function BucketView({
               destinations={destinations}
               onMove={onMove}
               onRemove={onRemove}
+              onEdit={onUpdate ? () => setEditing(vod) : null}
               onAdvance={onAdvance}
               onRegress={onRegress}
             />
@@ -59,11 +68,21 @@ export default function BucketView({
         </div>
       )}
 
-      {showModal && (
-        <AddVodModal
+      {showCreate && (
+        <VodModal
+          mode="create"
           bucketLabel={title}
-          onAdd={handleAdd}
-          onClose={() => setShowModal(false)}
+          onConfirm={handleCreate}
+          onClose={() => setShowCreate(false)}
+        />
+      )}
+
+      {editing && (
+        <VodModal
+          mode="edit"
+          initialData={editing}
+          onConfirm={handleUpdate}
+          onClose={() => setEditing(null)}
         />
       )}
     </>
