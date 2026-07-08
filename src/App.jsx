@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { TABS, STORE_KEYS } from "./constants/nav"
+import { TABS } from "./constants/nav"
 import { useVodStore } from "./store/vodStore"
 import HomeView from "./views/HomeView"
 import InboxView from "./views/InboxView"
@@ -10,31 +10,29 @@ import TrashView from "./views/TrashView"
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("home")
-  const store = useVodStore()
   const {
     buckets,
     addVod,
-    moveVod,
     updateVod,
+    moveVod,
     advancePhase,
     regressPhase,
     removeVod,
-  } = store
-
-  const moveAndNavigate = (vodId, fromId, toId) => {
-    moveVod(vodId, fromId, toId)
-    setActiveTab(toId)
-  }
+  } = useVodStore()
 
   const view = () => {
     switch (activeTab) {
       case "home":
-        return <HomeView buckets={buckets} onNavigate={setActiveTab} />
+        return (
+          <HomeView key="home" buckets={buckets} onNavigate={setActiveTab} />
+        )
       case "inbox":
         return (
           <InboxView
+            key="inbox"
             buckets={buckets}
             addVod={addVod}
+            updateVod={updateVod}
             moveVod={moveVod}
             removeVod={removeVod}
           />
@@ -42,8 +40,10 @@ export default function App() {
       case "ideas":
         return (
           <IdeasView
+            key="ideas"
             buckets={buckets}
             addVod={addVod}
+            updateVod={updateVod}
             moveVod={moveVod}
             removeVod={removeVod}
           />
@@ -51,8 +51,10 @@ export default function App() {
       case "editing":
         return (
           <EditingView
+            key="editing"
             buckets={buckets}
             addVod={addVod}
+            updateVod={updateVod}
             moveVod={moveVod}
             advancePhase={advancePhase}
             regressPhase={regressPhase}
@@ -62,14 +64,23 @@ export default function App() {
       case "shorts":
         return (
           <ShortsView
+            key="shorts"
             buckets={buckets}
             addVod={addVod}
+            updateVod={updateVod}
             moveVod={moveVod}
             removeVod={removeVod}
           />
         )
       case "trash":
-        return <TrashView buckets={buckets} removeVod={removeVod} />
+        return (
+          <TrashView
+            key="trash"
+            buckets={buckets}
+            updateVod={updateVod}
+            removeVod={removeVod}
+          />
+        )
       default:
         return null
     }
