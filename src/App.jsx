@@ -1,6 +1,6 @@
-import { useState } from "react"
 import { TABS } from "./constants/nav"
 import { useVodStore } from "./store/vodStore"
+import { useActiveTab } from "./hooks/useActiveTab"
 import HomeView from "./views/HomeView"
 import InboxView from "./views/InboxView"
 import IdeasView from "./views/IdeasView"
@@ -9,7 +9,7 @@ import ShortsView from "./views/ShortsView"
 import TrashView from "./views/TrashView"
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("home")
+  const { activeTab, navigate } = useActiveTab()
   const {
     buckets,
     addVod,
@@ -23,9 +23,7 @@ export default function App() {
   const view = () => {
     switch (activeTab) {
       case "home":
-        return (
-          <HomeView key="home" buckets={buckets} onNavigate={setActiveTab} />
-        )
+        return <HomeView key="home" buckets={buckets} onNavigate={navigate} />
       case "inbox":
         return (
           <InboxView
@@ -136,7 +134,7 @@ export default function App() {
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => navigate(tab.id)}
               className="flex items-center gap-1.5 px-3.5 py-3 text-[13px] border-b-2 cursor-pointer border-none bg-transparent transition-colors duration-150 whitespace-nowrap"
               style={{
                 borderBottomColor: isActive ? "var(--sf-green)" : "transparent",
