@@ -3,6 +3,8 @@ import ViewHeader from "./ViewHeader"
 import EmptyState from "./EmptyState"
 import VodCard from "./VodCard"
 import VodModal from "./VodModal"
+import SortControl from "./SortControl"
+import { useSortedVods } from "../hooks/useSortedVods"
 
 export default function BucketView({
   bucketId,
@@ -21,7 +23,8 @@ export default function BucketView({
   children,
 }) {
   const [showCreate, setShowCreate] = useState(false)
-  const [editing, setEditing] = useState(null)
+  const [editingVod, setEditingVod] = useState(null)
+  const { sorted, sortId, setSortId } = useSortedVods(vods)
 
   const handleCreate = (data) => {
     onAdd(data)
@@ -29,10 +32,12 @@ export default function BucketView({
   }
 
   const handleUpdate = (data) => {
-    if (!editing) return
-    onUpdate(bucketId, editing.id, data)
-    setEditing(null)
+    if (!editingVod || !onUpdate) return
+    onUpdate(bucketId, editingVod.id, data)
+    setEditingVod(null)
   }
+
+  const handleEdit = (vod) => setEditingVod({ ...vod })
 
   return (
     <>
@@ -45,6 +50,8 @@ export default function BucketView({
 
       {children}
 
+      {vods.length > 1 && <SortControl sortId={sortId} onChange={setSortId} />}
+
       {vods.length === 0 ? (
         <EmptyState
           text={emptyText}
@@ -52,7 +59,7 @@ export default function BucketView({
         />
       ) : (
         <div className="flex flex-col gap-2.5">
-          {vods.map((vod) => (
+          {sorted.map((vod) => (
             <VodCard
               key={vod.id}
               vod={vod}
@@ -60,7 +67,7 @@ export default function BucketView({
               destinations={destinations}
               onMove={onMove}
               onRemove={onRemove}
-              onEdit={onUpdate ? () => setEditing(vod) : null}
+              onEdit={onUpdate ? handleEdit : null}
               onAdvance={onAdvance}
               onRegress={onRegress}
             />
@@ -77,12 +84,12 @@ export default function BucketView({
         />
       )}
 
-      {editing && (
+      {editingVod && (
         <VodModal
           mode="edit"
-          initialData={editing}
+          initialData={editingVod}
           onConfirm={handleUpdate}
-          onClose={() => setEditing(null)}
+          onClose={() => setEditingVod(null)}
         />
       )}
     </>
