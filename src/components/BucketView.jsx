@@ -4,7 +4,9 @@ import EmptyState from "./EmptyState"
 import VodCard from "./VodCard"
 import VodModal from "./VodModal"
 import SortControl from "./SortControl"
+import SearchBar from "./SearchBar"
 import { useSortedVods } from "../hooks/useSortedVods"
+import { useSearchVods } from "../hooks/useSearchVods"
 
 export default function BucketView({
   bucketId,
@@ -24,7 +26,9 @@ export default function BucketView({
 }) {
   const [showCreate, setShowCreate] = useState(false)
   const [editingVod, setEditingVod] = useState(null)
-  const { sorted, sortId, setSortId } = useSortedVods(vods)
+
+  const { filtered, query, setQuery } = useSearchVods(vods)
+  const { sorted, sortId, setSortId } = useSortedVods(filtered)
 
   const handleCreate = (data) => {
     onAdd(data)
@@ -39,6 +43,8 @@ export default function BucketView({
 
   const handleEdit = (vod) => setEditingVod({ ...vod })
 
+  const showControls = vods.length > 1
+
   return (
     <>
       <ViewHeader
@@ -50,12 +56,24 @@ export default function BucketView({
 
       {children}
 
-      {vods.length > 1 && <SortControl sortId={sortId} onChange={setSortId} />}
+      {showControls && (
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="flex-1 min-w-[200px]">
+            <SearchBar
+              query={query}
+              onChange={setQuery}
+              total={vods.length}
+              found={filtered.length}
+            />
+          </div>
+          <SortControl sortId={sortId} onChange={setSortId} />
+        </div>
+      )}
 
-      {vods.length === 0 ? (
+      {sorted.length === 0 ? (
         <EmptyState
-          text={emptyText}
-          onAdd={canAdd ? () => setShowCreate(true) : null}
+          text={query ? `Sin resultados para "${query}".` : emptyText}
+          onAdd={!query && canAdd ? () => setShowCreate(true) : null}
         />
       ) : (
         <div className="flex flex-col gap-2.5">
