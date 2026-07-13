@@ -33,31 +33,41 @@ export default function VodCard({
         setHovered(false)
         setConfirming(false)
       }}
-      className="rounded-xl px-3.5 py-3 transition-all duration-150"
+      className="rounded-xl px-4 py-3 transition-all duration-200"
       style={{
         background: "var(--bg)",
-        border: `1px solid ${hovered ? "var(--border)" : "transparent"}`,
-        boxShadow: hovered ? "var(--shadow)" : "0 1px 3px rgba(0,0,0,0.04)",
+        border: `1px solid ${hovered ? "var(--border)" : "var(--border)"}`,
+        boxShadow: hovered ? "var(--shadow)" : "none",
+        outline: hovered ? "1px solid var(--border)" : "none",
       }}
     >
-      <p
-        className="text-[13px] font-medium leading-snug m-0"
-        style={{ color: "var(--text-h)" }}
-      >
-        {vod.title}
-      </p>
+      <div className="flex items-start justify-between gap-3">
+        <p
+          className="text-[13px] font-medium leading-snug"
+          style={{ color: "var(--text-h)" }}
+        >
+          {vod.title}
+        </p>
+        {vod.date && (
+          <span
+            className="text-[11px] shrink-0 mt-0.5"
+            style={{ color: "var(--text)" }}
+          >
+            {formatDate(vod.date)}
+          </span>
+        )}
+      </div>
 
-      {(vod.duration || vod.date) && (
-        <div className="flex gap-3 mt-1.5 flex-wrap">
-          {vod.duration && <MetaChip icon="⏱" text={vod.duration} />}
-          {vod.date && <MetaChip icon="📅" text={formatDate(vod.date)} />}
-        </div>
+      {vod.duration && (
+        <p className="text-[11px] mt-1" style={{ color: "var(--text)" }}>
+          ⏱ {vod.duration}
+        </p>
       )}
 
       {vod.notes && (
         <p
-          className="text-[11px] leading-relaxed mt-1.5 m-0"
-          style={{ color: "var(--text)" }}
+          className="text-[12px] leading-relaxed mt-2 px-3 py-2 rounded-lg"
+          style={{ color: "var(--text)", background: "var(--code-bg)" }}
         >
           {vod.notes}
         </p>
@@ -86,21 +96,27 @@ export default function VodCard({
         >
           {destinations.length > 0 && (
             <>
-              <span className="text-[10px]" style={{ color: "var(--text)" }}>
+              <span
+                className="text-[10px] font-medium mr-0.5"
+                style={{ color: "var(--text)" }}
+              >
                 Mover a:
               </span>
               {destinations.map((dest) => (
-                <MoveBtn
+                <ActionBtn
                   key={dest.id}
-                  label={dest.label}
                   onClick={() => onMove(vod.id, bucketId, dest.id)}
-                />
+                >
+                  {dest.label} →
+                </ActionBtn>
               ))}
             </>
           )}
           <div className="ml-auto flex gap-1.5">
-            {onEdit && <EditBtn onClick={onEdit} />}
-            <RemoveBtn confirming={confirming} onClick={handleRemove} />
+            {onEdit && <ActionBtn onClick={onEdit}>✎ Editar</ActionBtn>}
+            <ActionBtn onClick={handleRemove} danger={confirming}>
+              {confirming ? "¿Confirmar?" : "✕ Quitar"}
+            </ActionBtn>
           </div>
         </div>
       )}
@@ -110,91 +126,50 @@ export default function VodCard({
           className="mt-2.5 pt-2.5"
           style={{ borderTop: "1px solid var(--border)" }}
         >
-          <button
-            onClick={handleRemove}
-            className="w-full text-[11px] font-semibold py-1.5 rounded-lg cursor-pointer border transition-all duration-150"
-            style={
-              confirming
-                ? {
-                    background: "#c0392b",
-                    color: "#fff",
-                    borderColor: "transparent",
-                  }
-                : {
-                    background: "#fdf0ee",
-                    color: "#c0392b",
-                    borderColor: "#c0392b22",
-                  }
-            }
-          >
+          <ActionBtn onClick={handleRemove} danger={confirming} fullWidth>
             {confirming ? "¿Confirmar eliminación?" : "Eliminar de StreamFlow"}
-          </button>
+          </ActionBtn>
         </div>
       )}
     </div>
   )
 }
 
-function MetaChip({ icon, text }) {
-  return (
-    <span
-      className="flex items-center gap-1 text-[11px]"
-      style={{ color: "var(--text)" }}
-    >
-      <span className="text-[10px]">{icon}</span>
-      {text}
-    </span>
-  )
-}
+function ActionBtn({ children, onClick, danger = false, fullWidth = false }) {
+  const [hov, setHov] = useState(false)
 
-function MoveBtn({ label, onClick }) {
+  const base = {
+    borderColor: "var(--border)",
+    color: "var(--text)",
+    background: "var(--bg)",
+  }
+  const hovered = {
+    borderColor: "var(--border)",
+    color: "var(--text-h)",
+    background: "var(--code-bg)",
+  }
+  const dangerIdle = {
+    borderColor: "#c0392b33",
+    color: "#c0392b",
+    background: "var(--bg)",
+  }
+  const dangerHov = {
+    borderColor: "transparent",
+    color: "#fff",
+    background: "#c0392b",
+  }
+
+  const style = danger ? (hov ? dangerHov : dangerIdle) : hov ? hovered : base
+
   return (
     <button
       onClick={onClick}
-      className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-colors duration-100 hover:bg-(--code-bg)"
-      style={{
-        borderColor: "var(--border)",
-        color: "var(--text-h)",
-        background: "var(--bg)",
-      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      className={`text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-all duration-150 ${fullWidth ? "w-full" : ""}`}
+      style={style}
     >
-      {label} →
-    </button>
-  )
-}
-
-function EditBtn({ onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-colors duration-100 hover:bg-(--code-bg)"
-      style={{
-        borderColor: "var(--border)",
-        color: "var(--text)",
-        background: "var(--bg)",
-      }}
-    >
-      ✎ Editar
-    </button>
-  )
-}
-
-function RemoveBtn({ confirming, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-all duration-150"
-      style={
-        confirming
-          ? { background: "#c0392b", color: "#fff", borderColor: "transparent" }
-          : {
-              borderColor: "var(--border)",
-              color: "var(--text)",
-              background: "var(--bg)",
-            }
-      }
-    >
-      {confirming ? "¿Confirmar?" : "✕ Quitar"}
+      {children}
     </button>
   )
 }

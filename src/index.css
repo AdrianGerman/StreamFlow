@@ -16,6 +16,11 @@
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
+  /* ── Tokens de acción ── */
+  --danger: #c0392b;
+  --danger-bg: #fdf0ee;
+  --danger-border: rgba(192, 57, 43, 0.2);
+
   /* ── Tokens StreamFlow ── */
   --sf-bg: #f4f4f0;
   --sf-col-bg: #ededea;
@@ -73,6 +78,10 @@
     --sf-shorts-text: #e87aaa;
     --sf-trash-bg: #2e1a0d;
     --sf-trash-text: #e8a07a;
+
+    --danger: #e05c4a;
+    --danger-bg: #2e1a18;
+    --danger-border: rgba(224, 92, 74, 0.25);
   }
 }
 

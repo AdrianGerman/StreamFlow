@@ -96,9 +96,12 @@ export default function App() {
           borderBottom: "1px solid var(--border)",
         }}
       >
-        <div className="flex items-center gap-2.5">
+        <button
+          onClick={() => navigate("home")}
+          className="flex items-center gap-2.5 cursor-pointer bg-transparent border-none p-0"
+        >
           <div
-            className="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-white text-sm"
+            className="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-white text-sm shrink-0"
             style={{ background: "var(--sf-green)" }}
           >
             🎬
@@ -109,8 +112,11 @@ export default function App() {
           >
             Stream<span style={{ color: "var(--sf-green)" }}>Flow</span>
           </span>
-        </div>
-        <span className="text-[12px]" style={{ color: "var(--text)" }}>
+        </button>
+        <span
+          className="text-[12px] capitalize"
+          style={{ color: "var(--text)" }}
+        >
           {new Date().toLocaleDateString("es-ES", {
             weekday: "long",
             day: "numeric",
@@ -120,7 +126,7 @@ export default function App() {
       </header>
 
       <nav
-        className="flex gap-0 px-5 shrink-0 overflow-x-auto"
+        className="flex shrink-0 overflow-x-auto"
         style={{
           background: "var(--bg)",
           borderBottom: "1px solid var(--border)",
@@ -135,23 +141,20 @@ export default function App() {
             <button
               key={tab.id}
               onClick={() => navigate(tab.id)}
-              className="flex items-center gap-1.5 px-3.5 py-3 text-[13px] border-b-2 cursor-pointer border-none bg-transparent transition-colors duration-150 whitespace-nowrap"
+              className="flex items-center gap-1.5 px-4 py-3 text-[13px] border-b-2 cursor-pointer border-t-0 border-x-0 bg-transparent transition-all duration-150 whitespace-nowrap"
               style={{
                 borderBottomColor: isActive ? "var(--sf-green)" : "transparent",
                 color: isActive ? "var(--sf-green)" : "var(--text)",
-                fontWeight: isActive ? 500 : 400,
+                fontWeight: isActive ? 600 : 400,
               }}
             >
-              <i className={`ti ${tab.icon} text-sm`} aria-hidden="true" />
               {tab.label}
               {count !== null && count > 0 && (
                 <span
-                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors duration-150"
                   style={{
-                    background: isActive
-                      ? "var(--sf-green-dim)"
-                      : "var(--code-bg)",
-                    color: isActive ? "var(--sf-edit-text)" : "var(--text)",
+                    background: isActive ? "var(--sf-green)" : "var(--code-bg)",
+                    color: isActive ? "#fff" : "var(--text)",
                   }}
                 >
                   {count}
