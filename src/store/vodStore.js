@@ -30,22 +30,49 @@ function generateId() {
   return `vod_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
 }
 
+/**
+ * Modelo de datos completo.
+ *
+ * Campos:
+ *   title        string   — nombre del archivo / stream (ej: "2024-06-22")
+ *   videoTitle   string   — título creativo del video a publicar
+ *   contentType  string   — "stream" | "recording"
+ *   duration     string   — duración legible (ej: "2h 30m")
+ *   date         string   — fecha ISO (ej: "2024-06-22")
+ *   notes        string   — notas libres
+ *   tags         string[] — "video" | "short" | "tiktok"
+ *   youtubeUrl   string   — URL del VOD subido al canal de VODs
+ *   shortsCount  number   — cuántos shorts salieron de este contenido
+ *   shortsPosted number   — cuántos shorts ya se subieron
+ *   phase        number   — fase de edición (1-4), solo relevante en bucket "editing"
+ */
 export function createVod({
-  title,
+  title = "",
+  videoTitle = "",
+  contentType = "stream",
   duration = "",
+  date = null,
   notes = "",
   tags = [],
-  date = null,
+  youtubeUrl = "",
+  shortsCount = 0,
+  shortsPosted = 0,
 }) {
   return {
     id: generateId(),
     title,
+    videoTitle,
+    contentType,
     duration,
     notes,
     tags,
     date: date ?? new Date().toISOString().slice(0, 10),
+    youtubeUrl,
+    shortsCount,
+    shortsPosted,
     phase: 1,
     createdAt: new Date().toISOString(),
+    completedAt: null,
   }
 }
 
@@ -66,8 +93,14 @@ export function useVodStore() {
     setBuckets((prev) => {
       const vod = prev[fromId]?.find((v) => v.id === vodId)
       if (!vod) return prev
+
       const updated =
-        toId === "editing" && fromId !== "editing" ? { ...vod, phase: 1 } : vod
+        toId === "editing" && fromId !== "editing"
+          ? { ...vod, phase: 1 }
+          : toId === "trash"
+            ? { ...vod, completedAt: new Date().toISOString() }
+            : vod
+
       return {
         ...prev,
         [fromId]: prev[fromId].filter((v) => v.id !== vodId),
