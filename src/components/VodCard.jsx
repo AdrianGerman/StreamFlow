@@ -1,6 +1,7 @@
 import { useState } from "react"
 import TagBadge from "./TagBadge"
 import PhaseBar from "./PhaseBar"
+import { CONTENT_TYPE_MAP } from "../constants/contentTypes"
 
 export default function VodCard({
   vod,
@@ -17,6 +18,7 @@ export default function VodCard({
 
   const isEditing = bucketId === "editing"
   const isTrash = bucketId === "trash"
+  const ct = CONTENT_TYPE_MAP[vod.contentType ?? "stream"]
 
   const handleRemove = () => {
     if (!confirming) {
@@ -36,32 +38,54 @@ export default function VodCard({
       className="rounded-xl px-4 py-3 transition-all duration-200"
       style={{
         background: "var(--bg)",
-        border: `1px solid ${hovered ? "var(--border)" : "var(--border)"}`,
+        border: `1px solid var(--border)`,
         boxShadow: hovered ? "var(--shadow)" : "none",
-        outline: hovered ? "1px solid var(--border)" : "none",
       }}
     >
-      <div className="flex items-start justify-between gap-3">
-        <p
-          className="text-[13px] font-medium leading-snug"
-          style={{ color: "var(--text-h)" }}
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <span
+          className="text-[10px] font-semibold uppercase tracking-wide"
+          style={{ color: "var(--text)" }}
         >
-          {vod.title}
-        </p>
+          {ct?.icon} {ct?.label}
+        </span>
         {vod.date && (
-          <span
-            className="text-[11px] shrink-0 mt-0.5"
-            style={{ color: "var(--text)" }}
-          >
+          <span className="text-[11px]" style={{ color: "var(--text)" }}>
             {formatDate(vod.date)}
           </span>
         )}
       </div>
 
+      <p className="text-[12px] leading-snug" style={{ color: "var(--text)" }}>
+        {vod.title}
+      </p>
+
+      {vod.videoTitle && (
+        <p
+          className="text-[14px] font-semibold leading-snug mt-1"
+          style={{ color: "var(--text-h)" }}
+        >
+          {vod.videoTitle}
+        </p>
+      )}
+
       {vod.duration && (
         <p className="text-[11px] mt-1" style={{ color: "var(--text)" }}>
           ⏱ {vod.duration}
         </p>
+      )}
+
+      {vod.youtubeUrl && (
+        <a
+          href={vod.youtubeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-[11px] font-medium mt-1.5 transition-opacity hover:opacity-70"
+          style={{ color: "var(--sf-green)" }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          ▶ Ver VOD en YouTube
+        </a>
       )}
 
       {vod.notes && (
@@ -137,29 +161,29 @@ export default function VodCard({
 
 function ActionBtn({ children, onClick, danger = false, fullWidth = false }) {
   const [hov, setHov] = useState(false)
-
-  const base = {
-    borderColor: "var(--border)",
-    color: "var(--text)",
-    background: "var(--bg)",
-  }
-  const hovered = {
-    borderColor: "var(--border)",
-    color: "var(--text-h)",
-    background: "var(--code-bg)",
-  }
-  const dangerIdle = {
-    borderColor: "#c0392b33",
-    color: "#c0392b",
-    background: "var(--bg)",
-  }
-  const dangerHov = {
-    borderColor: "transparent",
-    color: "#fff",
-    background: "#c0392b",
-  }
-
-  const style = danger ? (hov ? dangerHov : dangerIdle) : hov ? hovered : base
+  const style = danger
+    ? hov
+      ? {
+          background: "var(--danger)",
+          color: "#fff",
+          borderColor: "transparent",
+        }
+      : {
+          background: "var(--bg)",
+          color: "var(--danger)",
+          borderColor: "var(--danger-border)",
+        }
+    : hov
+      ? {
+          background: "var(--code-bg)",
+          color: "var(--text-h)",
+          borderColor: "var(--border)",
+        }
+      : {
+          background: "var(--bg)",
+          color: "var(--text)",
+          borderColor: "var(--border)",
+        }
 
   return (
     <button
