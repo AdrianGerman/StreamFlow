@@ -2,11 +2,20 @@ import { TABS } from "./constants/nav"
 import { useVodStore } from "./store/vodStore"
 import { useActiveTab } from "./hooks/useActiveTab"
 import HomeView from "./views/HomeView"
-import InboxView from "./views/InboxView"
+import StreamsView from "./views/StreamsView"
+import RecordingsView from "./views/RecordingsView"
 import IdeasView from "./views/IdeasView"
 import EditingView from "./views/EditingView"
 import ShortsView from "./views/ShortsView"
 import TrashView from "./views/TrashView"
+
+function tabCount(tab, buckets) {
+  if (!tab.storeKey) return null
+  const vods = buckets[tab.storeKey] ?? []
+  if (tab.filter)
+    return vods.filter((v) => (v.contentType ?? "stream") === tab.filter).length
+  return vods.length
+}
 
 export default function App() {
   const { activeTab, navigate } = useActiveTab()
@@ -24,10 +33,21 @@ export default function App() {
     switch (activeTab) {
       case "home":
         return <HomeView key="home" buckets={buckets} onNavigate={navigate} />
-      case "inbox":
+      case "streams":
         return (
-          <InboxView
-            key="inbox"
+          <StreamsView
+            key="streams"
+            buckets={buckets}
+            addVod={addVod}
+            updateVod={updateVod}
+            moveVod={moveVod}
+            removeVod={removeVod}
+          />
+        )
+      case "recordings":
+        return (
+          <RecordingsView
+            key="recordings"
             buckets={buckets}
             addVod={addVod}
             updateVod={updateVod}
@@ -133,9 +153,7 @@ export default function App() {
         }}
       >
         {TABS.map((tab) => {
-          const count = tab.storeKey
-            ? (buckets[tab.storeKey]?.length ?? 0)
-            : null
+          const count = tabCount(tab, buckets)
           const isActive = activeTab === tab.id
           return (
             <button
