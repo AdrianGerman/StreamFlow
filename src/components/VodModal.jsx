@@ -7,13 +7,14 @@ export default function VodModal({
   mode = "create",
   bucketLabel,
   initialData = null,
+  defaultContentType = "stream",
   onConfirm,
   onClose,
 }) {
   const [title, setTitle] = useState(initialData?.title ?? "")
   const [videoTitle, setVideoTitle] = useState(initialData?.videoTitle ?? "")
   const [contentType, setContentType] = useState(
-    initialData?.contentType ?? "stream",
+    initialData?.contentType ?? defaultContentType,
   )
   const [duration, setDuration] = useState(initialData?.duration ?? "")
   const [date, setDate] = useState(
