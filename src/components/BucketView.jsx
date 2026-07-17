@@ -16,6 +16,7 @@ export default function BucketView({
   vods,
   destinations,
   canAdd = true,
+  defaultContentType = "stream",
   onAdd,
   onUpdate = null,
   onMove,
@@ -97,6 +98,7 @@ export default function BucketView({
         <VodModal
           mode="create"
           bucketLabel={title}
+          defaultContentType={defaultContentType}
           onConfirm={handleCreate}
           onClose={() => setShowCreate(false)}
         />
