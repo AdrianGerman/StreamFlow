@@ -89,17 +89,17 @@ export function useVodStore() {
     return vod
   }, [])
 
-  const moveVod = useCallback((vodId, fromId, toId) => {
+  const moveVod = useCallback((vodId, fromId, toId, extraData = {}) => {
     setBuckets((prev) => {
       const vod = prev[fromId]?.find((v) => v.id === vodId)
       if (!vod) return prev
 
-      const updated =
-        toId === "editing" && fromId !== "editing"
-          ? { ...vod, phase: 1 }
-          : toId === "trash"
-            ? { ...vod, completedAt: new Date().toISOString() }
-            : vod
+      const updated = {
+        ...vod,
+        ...extraData,
+        ...(toId === "editing" && fromId !== "editing" ? { phase: 1 } : {}),
+        ...(toId === "trash" ? { completedAt: new Date().toISOString() } : {}),
+      }
 
       return {
         ...prev,
