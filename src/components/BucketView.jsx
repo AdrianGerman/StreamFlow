@@ -87,6 +87,7 @@ export default function BucketView({
               onMove={onMove}
               onRemove={onRemove}
               onEdit={onUpdate ? handleEdit : null}
+              onUpdate={onUpdate}
               onAdvance={onAdvance}
               onRegress={onRegress}
             />
