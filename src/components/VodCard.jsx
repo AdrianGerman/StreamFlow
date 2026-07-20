@@ -1,6 +1,7 @@
 import { useState } from "react"
 import TagBadge from "./TagBadge"
 import PhaseBar from "./PhaseBar"
+import ShortsTracker from "./ShortsTracker"
 import ShortsModal from "./ShortsModal"
 import { CONTENT_TYPE_MAP } from "../constants/contentTypes"
 
@@ -13,12 +14,14 @@ export default function VodCard({
   onAdvance,
   onRegress,
   onRemove,
+  onUpdate,
 }) {
   const [hovered, setHovered] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [shortsTarget, setShortsTarget] = useState(null)
 
   const isEditing = bucketId === "editing"
+  const isShorts = bucketId === "shorts"
   const isTrash = bucketId === "trash"
   const ct = CONTENT_TYPE_MAP[vod.contentType ?? "stream"]
 
@@ -33,9 +36,9 @@ export default function VodCard({
   const handleMove = (destId) => {
     if (destId === "shorts") {
       setShortsTarget(destId)
-    } else {
-      onMove(vod.id, bucketId, destId)
+      return
     }
+    onMove(vod.id, bucketId, destId)
   }
 
   const handleShortsConfirm = (count) => {
@@ -132,6 +135,14 @@ export default function VodCard({
             phase={vod.phase}
             onAdvance={() => onAdvance?.(vod.id, vod.phase)}
             onRegress={() => onRegress?.(vod.id, vod.phase)}
+          />
+        )}
+
+        {isShorts && onUpdate && (
+          <ShortsTracker
+            vod={vod}
+            onUpdate={(changes) => onUpdate(bucketId, vod.id, changes)}
+            onComplete={() => onMove(vod.id, bucketId, "trash")}
           />
         )}
 
