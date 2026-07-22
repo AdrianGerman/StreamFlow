@@ -8,6 +8,7 @@ import IdeasView from "./views/IdeasView"
 import EditingView from "./views/EditingView"
 import ShortsView from "./views/ShortsView"
 import TrashView from "./views/TrashView"
+import HistoryView from "./views/HistoryView"
 
 function tabCount(tab, buckets) {
   if (!tab.storeKey) return null
@@ -99,6 +100,8 @@ export default function App() {
             removeVod={removeVod}
           />
         )
+      case "history":
+        return <HistoryView key="history" buckets={buckets} />
       default:
         return null
     }
