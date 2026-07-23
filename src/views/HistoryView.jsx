@@ -89,7 +89,10 @@ export default function HistoryView({ buckets }) {
                   tickLine={false}
                   width={24}
                 />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip
+                  content={<CustomTooltip />}
+                  cursor={{ fill: "var(--border)", opacity: 0.3 }}
+                />
                 <Bar
                   dataKey="videosCompleted"
                   name="Videos"
@@ -124,7 +127,10 @@ export default function HistoryView({ buckets }) {
                   tickLine={false}
                   width={24}
                 />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip
+                  content={<CustomTooltip />}
+                  cursor={{ fill: "var(--border)", opacity: 0.3 }}
+                />
                 <Bar
                   dataKey="shortsPosted"
                   name="Shorts"
@@ -159,7 +165,10 @@ export default function HistoryView({ buckets }) {
                   tickLine={false}
                   width={24}
                 />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip
+                  content={<CustomTooltip />}
+                  cursor={{ fill: "var(--border)", opacity: 0.3 }}
+                />
                 <Legend
                   iconType="circle"
                   iconSize={8}
