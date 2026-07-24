@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { TABS } from "./constants/nav"
 import { useVodStore } from "./store/vodStore"
 import { useActiveTab } from "./hooks/useActiveTab"
@@ -9,6 +10,7 @@ import EditingView from "./views/EditingView"
 import ShortsView from "./views/ShortsView"
 import TrashView from "./views/TrashView"
 import HistoryView from "./views/HistoryView"
+import DataManager from "./components/DataManager"
 
 function tabCount(tab, buckets) {
   if (!tab.storeKey) return null
@@ -29,6 +31,7 @@ export default function App() {
     regressPhase,
     removeVod,
   } = useVodStore()
+  const [showDataManager, setShowDataManager] = useState(false)
 
   const view = () => {
     switch (activeTab) {
@@ -136,16 +139,31 @@ export default function App() {
             Stream<span style={{ color: "var(--sf-green)" }}>Flow</span>
           </span>
         </button>
-        <span
-          className="text-[12px] capitalize"
-          style={{ color: "var(--text)" }}
-        >
-          {new Date().toLocaleDateString("es-ES", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-          })}
-        </span>
+
+        <div className="flex items-center gap-3">
+          <span
+            className="text-[12px] capitalize"
+            style={{ color: "var(--text)" }}
+          >
+            {new Date().toLocaleDateString("es-ES", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+            })}
+          </span>
+          <button
+            onClick={() => setShowDataManager(true)}
+            title="Backup y datos"
+            className="text-[12px] px-2.5 py-1 rounded-lg border cursor-pointer transition-colors duration-150 hover:bg-(--code-bg)"
+            style={{
+              borderColor: "var(--border)",
+              color: "var(--text)",
+              background: "transparent",
+            }}
+          >
+            💾 Backup
+          </button>
+        </div>
       </header>
 
       <nav
@@ -189,6 +207,10 @@ export default function App() {
       <main className="flex-1 overflow-y-auto">
         <div className="w-full max-w-5xl mx-auto px-6 py-6">{view()}</div>
       </main>
+
+      {showDataManager && (
+        <DataManager onClose={() => setShowDataManager(false)} />
+      )}
     </div>
   )
 }
