@@ -1,22 +1,33 @@
 import { useMemo } from "react"
 
-export function useHistoryStats(buckets) {
+function getWeekStart(date) {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
+  const monday = new Date(d)
+  monday.setDate(diff)
+  monday.setHours(0, 0, 0, 0)
+  return monday.toISOString().slice(0, 10)
+}
+
+function formatWeekLabel(weekStart) {
+  return new Date(weekStart + "T00:00:00").toLocaleDateString("es-ES", {
+    day: "numeric",
+    month: "short",
+  })
+}
+
+export function useHistoryStats(buckets, filter = "all") {
   return useMemo(() => {
-    const trash = buckets.trash ?? []
-    const allVods = Object.values(buckets).flat()
+    const applyFilter = (vods) =>
+      filter === "all"
+        ? vods
+        : vods.filter((v) => (v.contentType ?? "stream") === filter)
+
+    const trash = applyFilter(buckets.trash ?? [])
+    const allVods = applyFilter(Object.values(buckets).flat())
 
     const weekMap = new Map()
-
-    const getWeekKey = (dateStr) => {
-      if (!dateStr) return null
-      const date = new Date(dateStr)
-      const day = date.getDay()
-      const diff = date.getDate() - day + (day === 0 ? -6 : 1)
-      const monday = new Date(date)
-      monday.setDate(diff)
-      monday.setHours(0, 0, 0, 0)
-      return monday.toISOString().slice(0, 10)
-    }
 
     const getOrCreate = (key) => {
       if (!weekMap.has(key)) {
@@ -34,19 +45,17 @@ export function useHistoryStats(buckets) {
     }
 
     trash.forEach((vod) => {
-      const key = getWeekKey(vod.completedAt)
-      if (!key) return
-      const week = getOrCreate(key)
+      if (!vod.completedAt) return
+      const week = getOrCreate(getWeekStart(vod.completedAt))
       week.videosCompleted += 1
       week.shortsPosted += vod.shortsPosted ?? 0
     })
 
     allVods.forEach((vod) => {
-      const key = getWeekKey(vod.createdAt)
-      if (!key) return
-      const week = getOrCreate(key)
+      if (!vod.createdAt) return
+      const week = getOrCreate(getWeekStart(vod.createdAt))
       week.vodsAdded += 1
-      if (vod.contentType === "recording") week.recordingVods += 1
+      if ((vod.contentType ?? "stream") === "recording") week.recordingVods += 1
       else week.streamVods += 1
     })
 
@@ -64,10 +73,5 @@ export function useHistoryStats(buckets) {
     }
 
     return { weeks, totals }
-  }, [buckets])
-}
-
-function formatWeekLabel(weekStart) {
-  const date = new Date(weekStart + "T00:00:00")
-  return date.toLocaleDateString("es-ES", { day: "numeric", month: "short" })
+  }, [buckets, filter])
 }
