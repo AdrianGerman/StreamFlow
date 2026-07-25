@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
   BarChart,
   Bar,
@@ -16,21 +17,52 @@ const GREEN = "#1d9e75"
 const PURPLE = "#aa3bff"
 const PINK = "#e87aaa"
 
+const FILTERS = [
+  { id: "all", label: "Todo" },
+  { id: "stream", label: "Streams" },
+  { id: "recording", label: "Grabaciones" },
+]
+
+const CURSOR = { fill: "var(--border)", opacity: 0.3 }
+
 export default function HistoryView({ buckets }) {
-  const { weeks, totals } = useHistoryStats(buckets)
+  const [filter, setFilter] = useState("all")
+  const { weeks, totals } = useHistoryStats(buckets, filter)
   const hasData = weeks.length > 0
 
   return (
     <>
-      <h1
-        className="text-xl font-semibold mb-1"
-        style={{ color: "var(--text-h)" }}
-      >
-        Historial
-      </h1>
-      <p className="text-sm mb-6" style={{ color: "var(--text)" }}>
-        Tu flujo de trabajo de las últimas 12 semanas.
-      </p>
+      <div className="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <h1
+            className="text-xl font-semibold mb-1"
+            style={{ color: "var(--text-h)" }}
+          >
+            Historial
+          </h1>
+          <p className="text-sm" style={{ color: "var(--text)" }}>
+            Tu flujo de trabajo de las últimas 12 semanas.
+          </p>
+        </div>
+
+        <div className="flex gap-2 shrink-0">
+          {FILTERS.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className="text-[12px] font-medium px-3 py-1.5 rounded-full border cursor-pointer transition-all duration-150"
+              style={{
+                background:
+                  filter === f.id ? "var(--sf-green)" : "var(--code-bg)",
+                color: filter === f.id ? "#fff" : "var(--text)",
+                borderColor: filter === f.id ? "transparent" : "var(--border)",
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="grid grid-cols-4 gap-3 mb-8">
         <TotalCard
@@ -57,14 +89,17 @@ export default function HistoryView({ buckets }) {
             className="text-sm font-medium mb-1"
             style={{ color: "var(--text-h)" }}
           >
-            Sin datos todavía
+            Sin datos{" "}
+            {filter !== "all"
+              ? `para ${FILTERS.find((f) => f.id === filter)?.label.toLowerCase()}`
+              : "todavía"}
           </p>
           <p className="text-[13px]" style={{ color: "var(--text)" }}>
             El historial se llena a medida que completas videos y subes shorts.
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6">
           <ChartCard
             title="Videos terminados por semana"
             sub="Cuántos videos completaste cada semana"
@@ -78,21 +113,18 @@ export default function HistoryView({ buckets }) {
                 />
                 <XAxis
                   dataKey="label"
-                  tick={{ fontSize: 11, fill: "var(--text)" }}
+                  tick={tickStyle}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
                   allowDecimals={false}
-                  tick={{ fontSize: 11, fill: "var(--text)" }}
+                  tick={tickStyle}
                   axisLine={false}
                   tickLine={false}
                   width={24}
                 />
-                <Tooltip
-                  content={<CustomTooltip />}
-                  cursor={{ fill: "var(--border)", opacity: 0.3 }}
-                />
+                <Tooltip content={<CustomTooltip />} cursor={CURSOR} />
                 <Bar
                   dataKey="videosCompleted"
                   name="Videos"
@@ -116,21 +148,18 @@ export default function HistoryView({ buckets }) {
                 />
                 <XAxis
                   dataKey="label"
-                  tick={{ fontSize: 11, fill: "var(--text)" }}
+                  tick={tickStyle}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
                   allowDecimals={false}
-                  tick={{ fontSize: 11, fill: "var(--text)" }}
+                  tick={tickStyle}
                   axisLine={false}
                   tickLine={false}
                   width={24}
                 />
-                <Tooltip
-                  content={<CustomTooltip />}
-                  cursor={{ fill: "var(--border)", opacity: 0.3 }}
-                />
+                <Tooltip content={<CustomTooltip />} cursor={CURSOR} />
                 <Bar
                   dataKey="shortsPosted"
                   name="Shorts"
@@ -141,54 +170,53 @@ export default function HistoryView({ buckets }) {
             </ResponsiveContainer>
           </ChartCard>
 
-          <ChartCard
-            title="VODs agregados por semana"
-            sub="Streams vs grabaciones que fuiste agregando"
-          >
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={weeks} barSize={20}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="var(--border)"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="label"
-                  tick={{ fontSize: 11, fill: "var(--text)" }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis
-                  allowDecimals={false}
-                  tick={{ fontSize: 11, fill: "var(--text)" }}
-                  axisLine={false}
-                  tickLine={false}
-                  width={24}
-                />
-                <Tooltip
-                  content={<CustomTooltip />}
-                  cursor={{ fill: "var(--border)", opacity: 0.3 }}
-                />
-                <Legend
-                  iconType="circle"
-                  iconSize={8}
-                  wrapperStyle={{ fontSize: 11, color: "var(--text)" }}
-                />
-                <Bar
-                  dataKey="streamVods"
-                  name="Streams"
-                  fill={GREEN}
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  dataKey="recordingVods"
-                  name="Grabaciones"
-                  fill={PURPLE}
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
+          {filter === "all" && (
+            <ChartCard
+              title="VODs agregados por semana"
+              sub="Streams vs grabaciones que fuiste agregando"
+            >
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={weeks} barSize={20}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="var(--border)"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="label"
+                    tick={tickStyle}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    allowDecimals={false}
+                    tick={tickStyle}
+                    axisLine={false}
+                    tickLine={false}
+                    width={24}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={CURSOR} />
+                  <Legend
+                    iconType="circle"
+                    iconSize={8}
+                    wrapperStyle={{ fontSize: 11, color: "var(--text)" }}
+                  />
+                  <Bar
+                    dataKey="streamVods"
+                    name="Streams"
+                    fill={GREEN}
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="recordingVods"
+                    name="Grabaciones"
+                    fill={PURPLE}
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartCard>
+          )}
 
           <ChartCard
             title="Tendencia de productividad"
@@ -204,18 +232,21 @@ export default function HistoryView({ buckets }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis
                   dataKey="label"
-                  tick={{ fontSize: 11, fill: "var(--text)" }}
+                  tick={tickStyle}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
                   allowDecimals={false}
-                  tick={{ fontSize: 11, fill: "var(--text)" }}
+                  tick={tickStyle}
                   axisLine={false}
                   tickLine={false}
                   width={24}
                 />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip
+                  content={<CustomTooltip />}
+                  cursor={{ stroke: "var(--border)", strokeWidth: 1 }}
+                />
                 <Line
                   type="monotone"
                   dataKey="total"
@@ -296,3 +327,5 @@ function CustomTooltip({ active, payload, label }) {
     </div>
   )
 }
+
+const tickStyle = { fontSize: 11, fill: "var(--text)" }
