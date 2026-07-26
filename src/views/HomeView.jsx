@@ -1,11 +1,14 @@
 import { useTodaySuggestions } from "../hooks/useTodaySuggestions"
+import { useWeeklyStats } from "../hooks/useWeeklyStats"
+import WeeklySummary from "../components/WeeklySummary"
 import { TOTAL_PHASES } from "../constants/phases"
 
 export default function HomeView({ buckets, onNavigate }) {
   const suggestions = useTodaySuggestions(buckets)
+  const weeklyStats = useWeeklyStats(buckets)
+
   const editingVods = buckets.editing ?? []
   const activeEdit = editingVods[0] ?? null
-
   const inboxCount = buckets.inbox?.length ?? 0
   const shortsCount = buckets.shorts?.length ?? 0
   const trashCount = buckets.trash?.length ?? 0
@@ -31,12 +34,14 @@ export default function HomeView({ buckets, onNavigate }) {
         {today}
       </p>
 
+      <WeeklySummary stats={weeklyStats} onNavigate={onNavigate} />
+
       <div className="grid grid-cols-4 gap-3 mb-8">
         <StatCard
           label="Sin clasificar"
           value={inboxCount}
           sub="VODs esperando"
-          onClick={() => onNavigate("inbox")}
+          onClick={() => onNavigate("streams")}
         />
         <StatCard
           label="En edición"
@@ -111,7 +116,7 @@ export default function HomeView({ buckets, onNavigate }) {
                   className="text-[13px] font-medium mb-3 leading-snug"
                   style={{ color: "var(--text-h)" }}
                 >
-                  {activeEdit.title}
+                  {activeEdit.videoTitle || activeEdit.title}
                 </p>
                 <div className="flex flex-col gap-2">
                   {[1, 2, 3, 4].map((n) => (
@@ -125,10 +130,18 @@ export default function HomeView({ buckets, onNavigate }) {
               <SectionTitle>Acceso rápido</SectionTitle>
               <div className="flex flex-col gap-2">
                 {[
-                  { id: "inbox", icon: "📥", label: "VODs sin clasificar" },
+                  {
+                    id: "streams",
+                    icon: "🎮",
+                    label: "Streams sin clasificar",
+                  },
+                  {
+                    id: "recordings",
+                    icon: "🎥",
+                    label: "Grabaciones pendientes",
+                  },
                   { id: "ideas", icon: "💡", label: "Ideas de contenido" },
                   { id: "editing", icon: "✂️", label: "En edición" },
-                  { id: "shorts", icon: "📱", label: "Pool de shorts" },
                 ].map((item) => (
                   <button
                     key={item.id}
@@ -230,6 +243,7 @@ function TodayItem({ suggestion: s, onClick }) {
 function PhaseRow({ n, currentPhase }) {
   const done = n < currentPhase
   const active = n === currentPhase
+  const labels = ["Cortar", "Zoom y edición", "Música", "Intro y outro"]
 
   return (
     <div
@@ -254,7 +268,7 @@ function PhaseRow({ n, currentPhase }) {
           color: done || active ? "var(--sf-edit-text)" : "var(--text)",
         }}
       >
-        {phaseLabel(n)}
+        {labels[n - 1]}
       </span>
     </div>
   )
@@ -269,8 +283,4 @@ function SectionTitle({ children }) {
       {children}
     </p>
   )
-}
-
-function phaseLabel(n) {
-  return ["Cortar", "Zoom y edición", "Música", "Intro y outro"][n - 1] ?? ""
 }
