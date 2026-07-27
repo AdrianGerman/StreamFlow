@@ -116,7 +116,7 @@ export default function App() {
       style={{ background: "var(--sf-bg)", fontFamily: "var(--sans)" }}
     >
       <header
-        className="h-[52px] flex items-center justify-between px-5 sticky top-0 z-10 shrink-0"
+        className="h-[50px] flex items-center justify-between px-5 sticky top-0 z-10 shrink-0"
         style={{
           background: "var(--bg)",
           borderBottom: "1px solid var(--border)",
@@ -124,16 +124,16 @@ export default function App() {
       >
         <button
           onClick={() => navigate("home")}
-          className="flex items-center gap-2.5 cursor-pointer bg-transparent border-none p-0"
+          className="flex items-center gap-2 cursor-pointer bg-transparent border-none p-0"
         >
           <div
-            className="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-white text-sm shrink-0"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs shrink-0"
             style={{ background: "var(--sf-green)" }}
           >
             🎬
           </div>
           <span
-            className="text-[15px] font-semibold tracking-tight"
+            className="text-[14px] font-semibold tracking-tight"
             style={{ color: "var(--text-h)" }}
           >
             Stream<span style={{ color: "var(--sf-green)" }}>Flow</span>
@@ -142,7 +142,7 @@ export default function App() {
 
         <div className="flex items-center gap-3">
           <span
-            className="text-[12px] capitalize"
+            className="text-[12px] capitalize hidden sm:block"
             style={{ color: "var(--text)" }}
           >
             {new Date().toLocaleDateString("es-ES", {
@@ -154,7 +154,7 @@ export default function App() {
           <button
             onClick={() => setShowDataManager(true)}
             title="Backup y datos"
-            className="text-[12px] px-2.5 py-1 rounded-lg border cursor-pointer transition-colors duration-150 hover:bg-(--code-bg)"
+            className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-colors duration-150 hover:bg-(--code-bg)"
             style={{
               borderColor: "var(--border)",
               color: "var(--text)",
@@ -180,7 +180,7 @@ export default function App() {
             <button
               key={tab.id}
               onClick={() => navigate(tab.id)}
-              className="flex items-center gap-1.5 px-4 py-3 text-[13px] border-b-2 cursor-pointer border-t-0 border-x-0 bg-transparent transition-all duration-150 whitespace-nowrap"
+              className="flex items-center gap-1.5 px-3 py-2.5 text-[12px] border-b-2 cursor-pointer border-t-0 border-x-0 bg-transparent transition-all duration-150 whitespace-nowrap"
               style={{
                 borderBottomColor: isActive ? "var(--sf-green)" : "transparent",
                 color: isActive ? "var(--sf-green)" : "var(--text)",
@@ -205,7 +205,7 @@ export default function App() {
       </nav>
 
       <main className="flex-1 overflow-y-auto">
-        <div className="w-full max-w-5xl mx-auto px-6 py-6">{view()}</div>
+        <div className="w-full max-w-5xl mx-auto px-6 py-5">{view()}</div>
       </main>
 
       {showDataManager && (

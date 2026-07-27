@@ -1,7 +1,7 @@
 export default function EmptyState({ text, onAdd }) {
   return (
     <div
-      className="rounded-xl border border-dashed p-10 text-center"
+      className="rounded-xl border border-dashed py-12 px-8 text-center"
       style={{ borderColor: "var(--border)" }}
     >
       <p className="text-[13px] mb-3" style={{ color: "var(--text)" }}>
@@ -10,7 +10,7 @@ export default function EmptyState({ text, onAdd }) {
       {onAdd && (
         <button
           onClick={onAdd}
-          className="text-[13px] font-medium px-4 py-2 rounded-lg cursor-pointer border-none text-white"
+          className="text-[12px] font-medium px-4 py-2 rounded-lg cursor-pointer border-none text-white transition-opacity hover:opacity-90"
           style={{ background: "var(--sf-green)" }}
         >
           + Agregar VOD

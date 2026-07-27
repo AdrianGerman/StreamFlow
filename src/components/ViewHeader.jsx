@@ -1,15 +1,15 @@
 export default function ViewHeader({ title, sub, count, onAdd }) {
   return (
-    <div className="flex items-start justify-between mb-5">
+    <div className="flex items-start justify-between gap-4 mb-5">
       <div>
         <h1
-          className="text-lg font-medium mb-0.5"
+          className="text-[17px] font-semibold mb-0.5 flex items-center gap-2"
           style={{ color: "var(--text-h)" }}
         >
           {title}
           {count > 0 && (
             <span
-              className="ml-2 text-[12px] font-semibold px-2 py-0.5 rounded-full align-middle"
+              className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
               style={{ background: "var(--code-bg)", color: "var(--text)" }}
             >
               {count}
@@ -17,7 +17,7 @@ export default function ViewHeader({ title, sub, count, onAdd }) {
           )}
         </h1>
         {sub && (
-          <p className="text-[13px]" style={{ color: "var(--text)" }}>
+          <p className="text-[12px]" style={{ color: "var(--text)" }}>
             {sub}
           </p>
         )}
@@ -26,10 +26,10 @@ export default function ViewHeader({ title, sub, count, onAdd }) {
       {onAdd && (
         <button
           onClick={onAdd}
-          className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg border-none cursor-pointer text-white transition-opacity hover:opacity-90"
+          className="flex items-center gap-1.5 text-[12px] font-medium px-3 py-1.5 rounded-lg border-none cursor-pointer text-white shrink-0 transition-opacity hover:opacity-90"
           style={{ background: "var(--sf-green)" }}
         >
-          <i className="ti ti-plus text-sm" aria-hidden="true" /> Agregar
+          + Agregar
         </button>
       )}
     </div>
