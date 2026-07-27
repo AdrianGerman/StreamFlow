@@ -1,33 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  /* ── Tokens base ── */
   --text: #6b6375;
   --text-h: #08060d;
-  --bg: #fff;
+  --bg: #ffffff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(0, 0, 0, 0.08) 0 4px 12px -2px, rgba(0, 0, 0, 0.04) 0 2px 4px -1px;
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  /* ── Tokens de acción ── */
-  --danger: #c0392b;
-  --danger-bg: #fdf0ee;
-  --danger-border: rgba(192, 57, 43, 0.2);
-
-  /* ── Tokens StreamFlow ── */
-  --sf-bg: #f4f4f0;
+  --sf-bg: #f2f2ee;
   --sf-col-bg: #ededea;
   --sf-green: #1d9e75;
-  --sf-green-dim: #e1f5ee;
+  --sf-green-dim: #d0ede3;
 
-  /* Columnas */
   --sf-inbox-bg: #eaeae4;
   --sf-inbox-text: #3a3a36;
   --sf-ideas-bg: #daeafa;
@@ -39,8 +31,14 @@
   --sf-trash-bg: #fae0d4;
   --sf-trash-text: #5c2010;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  --danger: #c0392b;
+  --danger-bg: #fdf0ee;
+  --danger-border: rgba(192, 57, 43, 0.2);
+
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.1px;
   color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
@@ -61,12 +59,12 @@
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
     --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+      rgba(0, 0, 0, 0.4) 0 4px 12px -2px, rgba(0, 0, 0, 0.2) 0 2px 4px -1px;
 
     --sf-bg: #1a1a1f;
     --sf-col-bg: #22222a;
-    --sf-green: #1d9e75;
-    --sf-green-dim: #0a2e22;
+    --sf-green: #22b886;
+    --sf-green-dim: #0d3326;
 
     --sf-inbox-bg: #2a2a2e;
     --sf-inbox-text: #c0c0b8;
@@ -99,4 +97,19 @@ body {
   flex-direction: column;
   box-sizing: border-box;
   border-inline: none;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text);
 }
