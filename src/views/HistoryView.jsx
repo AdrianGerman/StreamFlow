@@ -12,18 +12,23 @@ import {
   CartesianGrid,
 } from "recharts"
 import { useHistoryStats } from "../hooks/useHistoryStats"
+import {
+  TotalCard,
+  ChartCard,
+  CustomTooltip,
+  tickStyle,
+} from "../components/ChartWidgets"
 
 const GREEN = "#1d9e75"
 const PURPLE = "#aa3bff"
 const PINK = "#e87aaa"
+const CURSOR = { fill: "var(--border)", opacity: 0.3 }
 
 const FILTERS = [
   { id: "all", label: "Todo" },
   { id: "stream", label: "Streams" },
   { id: "recording", label: "Grabaciones" },
 ]
-
-const CURSOR = { fill: "var(--border)", opacity: 0.3 }
 
 export default function HistoryView({ buckets }) {
   const [filter, setFilter] = useState("all")
@@ -44,7 +49,6 @@ export default function HistoryView({ buckets }) {
             Tu flujo de trabajo de las últimas 12 semanas.
           </p>
         </div>
-
         <div className="flex gap-2 shrink-0">
           {FILTERS.map((f) => (
             <button
@@ -264,68 +268,3 @@ export default function HistoryView({ buckets }) {
     </>
   )
 }
-
-function TotalCard({ label, value, icon }) {
-  return (
-    <div
-      className="rounded-xl p-4 border"
-      style={{ background: "var(--code-bg)", borderColor: "var(--border)" }}
-    >
-      <p className="text-xl mb-1">{icon}</p>
-      <p
-        className="text-2xl font-semibold mb-0.5"
-        style={{ color: "var(--text-h)" }}
-      >
-        {value}
-      </p>
-      <p className="text-[11px]" style={{ color: "var(--text)" }}>
-        {label}
-      </p>
-    </div>
-  )
-}
-
-function ChartCard({ title, sub, children }) {
-  return (
-    <div
-      className="rounded-xl p-5 border"
-      style={{ background: "var(--bg)", borderColor: "var(--border)" }}
-    >
-      <p
-        className="text-[14px] font-semibold mb-0.5"
-        style={{ color: "var(--text-h)" }}
-      >
-        {title}
-      </p>
-      <p className="text-[12px] mb-4" style={{ color: "var(--text)" }}>
-        {sub}
-      </p>
-      {children}
-    </div>
-  )
-}
-
-function CustomTooltip({ active, payload, label }) {
-  if (!active || !payload?.length) return null
-  return (
-    <div
-      className="rounded-lg px-3 py-2 text-[12px] border"
-      style={{
-        background: "var(--bg)",
-        borderColor: "var(--border)",
-        boxShadow: "var(--shadow)",
-      }}
-    >
-      <p className="font-semibold mb-1" style={{ color: "var(--text-h)" }}>
-        Semana del {label}
-      </p>
-      {payload.map((p) => (
-        <p key={p.dataKey} style={{ color: p.color }}>
-          {p.name}: <strong>{p.value}</strong>
-        </p>
-      ))}
-    </div>
-  )
-}
-
-const tickStyle = { fontSize: 11, fill: "var(--text)" }
