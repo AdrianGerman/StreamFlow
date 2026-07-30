@@ -1,56 +1,10 @@
+import { useDataBackup } from "../hooks/useDataBackup"
+
 export default function DataManager({ onClose }) {
-  const handleExport = () => {
-    try {
-      const raw = localStorage.getItem("streamflow:vods") ?? "{}"
-      const data = {
-        version: 1,
-        exportedAt: new Date().toISOString(),
-        vods: JSON.parse(raw),
-      }
-      const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: "application/json",
-      })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `streamflow-backup-${new Date().toISOString().slice(0, 10)}.json`
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch {
-      alert("No se pudo exportar el backup.")
-    }
-  }
+  const { exportBackup, importBackup } = useDataBackup()
 
   const handleImport = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      try {
-        const data = JSON.parse(ev.target.result)
-
-        if (!data.vods || typeof data.vods !== "object") {
-          alert("El archivo no es un backup válido de StreamFlow.")
-          return
-        }
-
-        if (
-          !confirm(
-            "¿Reemplazar todos los datos actuales con este backup? Esta acción no se puede deshacer.",
-          )
-        )
-          return
-
-        localStorage.setItem("streamflow:vods", JSON.stringify(data.vods))
-        window.location.reload()
-      } catch {
-        alert(
-          "No se pudo leer el archivo. Asegúrate de que sea un backup válido de StreamFlow.",
-        )
-      }
-    }
-    reader.readAsText(file)
+    importBackup(e.target.files?.[0], () => window.location.reload())
     e.target.value = ""
   }
 
@@ -90,7 +44,7 @@ export default function DataManager({ onClose }) {
             Descarga un archivo JSON con todos tus VODs y su estado actual.
           </p>
           <button
-            onClick={handleExport}
+            onClick={exportBackup}
             className="w-full py-2 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white transition-opacity hover:opacity-90"
             style={{ background: "var(--sf-green)" }}
           >

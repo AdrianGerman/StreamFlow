@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import { formatWeekLabel } from "../utils/date"
 
 function getWeekStart(date) {
   const d = new Date(date)
@@ -8,13 +9,6 @@ function getWeekStart(date) {
   monday.setDate(diff)
   monday.setHours(0, 0, 0, 0)
   return monday.toISOString().slice(0, 10)
-}
-
-function formatWeekLabel(weekStart) {
-  return new Date(weekStart + "T00:00:00").toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "short",
-  })
 }
 
 export function useHistoryStats(buckets, filter = "all") {
