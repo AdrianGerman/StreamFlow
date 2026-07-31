@@ -19,7 +19,7 @@ import {
   tickStyle,
 } from "../components/ChartWidgets"
 
-const GREEN = "#1d9e75"
+const GREEN = "#7c3aed"
 const PURPLE = "#aa3bff"
 const PINK = "#e87aaa"
 const CURSOR = { fill: "var(--border)", opacity: 0.3 }
