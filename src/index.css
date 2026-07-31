@@ -5,27 +5,29 @@
   --text-h: #08060d;
   --bg: #ffffff;
   --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
+  --code-bg: #f4f3f8;
+  --accent: #7c3aed;
+  --accent-bg: rgba(124, 58, 237, 0.1);
+  --accent-border: rgba(124, 58, 237, 0.4);
   --shadow:
     rgba(0, 0, 0, 0.08) 0 4px 12px -2px, rgba(0, 0, 0, 0.04) 0 2px 4px -1px;
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  --sf-bg: #f2f2ee;
-  --sf-col-bg: #ededea;
-  --sf-green: #1d9e75;
-  --sf-green-dim: #d0ede3;
+  --sf-bg: #f4f3f8;
+  --sf-primary: #7c3aed;
+  --sf-primary-dim: #ede9fb;
+
+  --sf-green: var(--sf-primary);
+  --sf-green-dim: var(--sf-primary-dim);
 
   --sf-inbox-bg: #eaeae4;
   --sf-inbox-text: #3a3a36;
-  --sf-ideas-bg: #daeafa;
-  --sf-ideas-text: #0d3a5c;
-  --sf-edit-bg: #c8f0e0;
-  --sf-edit-text: #0a3d2e;
+  --sf-ideas-bg: #ede9fb;
+  --sf-ideas-text: #3b1d8a;
+  --sf-edit-bg: #ede9fb;
+  --sf-edit-text: #3b1d8a;
   --sf-shorts-bg: #fad6e4;
   --sf-shorts-text: #5c0d2a;
   --sf-trash-bg: #fae0d4;
@@ -54,24 +56,26 @@
     --text-h: #f3f4f6;
     --bg: #16171d;
     --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
+    --code-bg: #1e1b2e;
+    --accent: #a78bfa;
+    --accent-bg: rgba(167, 139, 250, 0.15);
+    --accent-border: rgba(167, 139, 250, 0.4);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 4px 12px -2px, rgba(0, 0, 0, 0.2) 0 2px 4px -1px;
 
-    --sf-bg: #1a1a1f;
-    --sf-col-bg: #22222a;
-    --sf-green: #22b886;
-    --sf-green-dim: #0d3326;
+    --sf-bg: #13111e;
+    --sf-primary: #9d6ffa;
+    --sf-primary-dim: #1e1535;
+
+    --sf-green: var(--sf-primary);
+    --sf-green-dim: var(--sf-primary-dim);
 
     --sf-inbox-bg: #2a2a2e;
     --sf-inbox-text: #c0c0b8;
-    --sf-ideas-bg: #0d2035;
-    --sf-ideas-text: #7ab8e8;
-    --sf-edit-bg: #0a2820;
-    --sf-edit-text: #5dcea0;
+    --sf-ideas-bg: #1e1535;
+    --sf-ideas-text: #c4a8ff;
+    --sf-edit-bg: #1e1535;
+    --sf-edit-text: #c4a8ff;
     --sf-shorts-bg: #2e0d1a;
     --sf-shorts-text: #e87aaa;
     --sf-trash-bg: #2e1a0d;
