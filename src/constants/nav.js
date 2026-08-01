@@ -1,18 +1,10 @@
 export const TABS = [
   { id: "home", label: "Inicio", icon: "ti-home" },
   {
-    id: "streams",
-    label: "Streams",
+    id: "content",
+    label: "Contenido",
     icon: "ti-device-tv",
     storeKey: "inbox",
-    filter: "stream",
-  },
-  {
-    id: "recordings",
-    label: "Grabaciones",
-    icon: "ti-video",
-    storeKey: "inbox",
-    filter: "recording",
   },
   { id: "ideas", label: "Ideas", icon: "ti-bulb", storeKey: "ideas" },
   { id: "editing", label: "Edición", icon: "ti-cut", storeKey: "editing" },

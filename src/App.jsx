@@ -3,8 +3,7 @@ import { TABS } from "./constants/nav"
 import { useVodStore } from "./store/vodStore"
 import { useActiveTab } from "./hooks/useActiveTab"
 import HomeView from "./views/HomeView"
-import StreamsView from "./views/StreamsView"
-import RecordingsView from "./views/RecordingsView"
+import ContentView from "./views/ContentView"
 import IdeasView from "./views/IdeasView"
 import EditingView from "./views/EditingView"
 import ShortsView from "./views/ShortsView"
@@ -14,10 +13,7 @@ import DataManager from "./components/DataManager"
 
 function tabCount(tab, buckets) {
   if (!tab.storeKey) return null
-  const vods = buckets[tab.storeKey] ?? []
-  if (tab.filter)
-    return vods.filter((v) => (v.contentType ?? "stream") === tab.filter).length
-  return vods.length
+  return (buckets[tab.storeKey] ?? []).length
 }
 
 export default function App() {
@@ -37,21 +33,10 @@ export default function App() {
     switch (activeTab) {
       case "home":
         return <HomeView key="home" buckets={buckets} onNavigate={navigate} />
-      case "streams":
+      case "content":
         return (
-          <StreamsView
-            key="streams"
-            buckets={buckets}
-            addVod={addVod}
-            updateVod={updateVod}
-            moveVod={moveVod}
-            removeVod={removeVod}
-          />
-        )
-      case "recordings":
-        return (
-          <RecordingsView
-            key="recordings"
+          <ContentView
+            key="content"
             buckets={buckets}
             addVod={addVod}
             updateVod={updateVod}
@@ -128,7 +113,7 @@ export default function App() {
         >
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs shrink-0"
-            style={{ background: "var(--sf-green)" }}
+            style={{ background: "var(--sf-primary)" }}
           >
             🎬
           </div>
@@ -136,7 +121,7 @@ export default function App() {
             className="text-[14px] font-semibold tracking-tight"
             style={{ color: "var(--text-h)" }}
           >
-            Stream<span style={{ color: "var(--sf-green)" }}>Flow</span>
+            Stream<span style={{ color: "var(--sf-primary)" }}>Flow</span>
           </span>
         </button>
 
@@ -182,8 +167,10 @@ export default function App() {
               onClick={() => navigate(tab.id)}
               className="flex items-center gap-1.5 px-3 py-2.5 text-[12px] border-b-2 cursor-pointer border-t-0 border-x-0 bg-transparent transition-all duration-150 whitespace-nowrap"
               style={{
-                borderBottomColor: isActive ? "var(--sf-green)" : "transparent",
-                color: isActive ? "var(--sf-green)" : "var(--text)",
+                borderBottomColor: isActive
+                  ? "var(--sf-primary)"
+                  : "transparent",
+                color: isActive ? "var(--sf-primary)" : "var(--text)",
                 fontWeight: isActive ? 600 : 400,
               }}
             >
@@ -192,7 +179,9 @@ export default function App() {
                 <span
                   className="text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors duration-150"
                   style={{
-                    background: isActive ? "var(--sf-green)" : "var(--code-bg)",
+                    background: isActive
+                      ? "var(--sf-primary)"
+                      : "var(--code-bg)",
                     color: isActive ? "#fff" : "var(--text)",
                   }}
                 >
