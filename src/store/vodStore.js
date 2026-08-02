@@ -57,6 +57,8 @@ export function createVod({
   youtubeUrl = "",
   shortsCount = 0,
   shortsPosted = 0,
+  vodRef = "",
+  moments = [],
 }) {
   return {
     id: generateId(),
@@ -70,6 +72,8 @@ export function createVod({
     youtubeUrl,
     shortsCount,
     shortsPosted,
+    vodRef,
+    moments,
     phase: 1,
     createdAt: new Date().toISOString(),
     completedAt: null,
@@ -93,14 +97,12 @@ export function useVodStore() {
     setBuckets((prev) => {
       const vod = prev[fromId]?.find((v) => v.id === vodId)
       if (!vod) return prev
-
       const updated = {
         ...vod,
         ...extraData,
         ...(toId === "editing" && fromId !== "editing" ? { phase: 1 } : {}),
         ...(toId === "trash" ? { completedAt: new Date().toISOString() } : {}),
       }
-
       return {
         ...prev,
         [fromId]: prev[fromId].filter((v) => v.id !== vodId),
