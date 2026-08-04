@@ -1,6 +1,7 @@
 import { useTodaySuggestions } from "../hooks/useTodaySuggestions"
 import { useWeeklyStats } from "../hooks/useWeeklyStats"
 import WeeklySummary from "../components/WeeklySummary"
+import QuickNotes from "../components/QuickNotes"
 import {
   StatCard,
   TodayItem,
@@ -47,7 +48,7 @@ export default function HomeView({ buckets, onNavigate }) {
           label="Sin clasificar"
           value={inboxCount}
           sub="VODs esperando"
-          onClick={() => onNavigate("streams")}
+          onClick={() => onNavigate("content")}
         />
         <StatCard
           label="En edición"
@@ -74,7 +75,7 @@ export default function HomeView({ buckets, onNavigate }) {
         />
       </div>
 
-      <div className="grid grid-cols-[1fr_320px] gap-6 items-start">
+      <div className="grid grid-cols-[1fr_300px] gap-6 items-start mb-6">
         <div>
           <SectionTitle>Sugerido para hoy</SectionTitle>
           <div className="flex flex-col gap-2">
@@ -137,17 +138,13 @@ export default function HomeView({ buckets, onNavigate }) {
               <div className="flex flex-col gap-2">
                 {[
                   {
-                    id: "streams",
+                    id: "content",
                     icon: "🎮",
-                    label: "Streams sin clasificar",
-                  },
-                  {
-                    id: "recordings",
-                    icon: "🎥",
-                    label: "Grabaciones pendientes",
+                    label: "Contenido sin clasificar",
                   },
                   { id: "ideas", icon: "💡", label: "Ideas de contenido" },
                   { id: "editing", icon: "✂️", label: "En edición" },
+                  { id: "shorts", icon: "📱", label: "Pool de shorts" },
                 ].map((item) => (
                   <button
                     key={item.id}
@@ -178,6 +175,8 @@ export default function HomeView({ buckets, onNavigate }) {
           )}
         </div>
       </div>
+
+      <QuickNotes />
     </>
   )
 }
