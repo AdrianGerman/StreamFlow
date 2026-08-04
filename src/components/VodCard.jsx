@@ -169,7 +169,9 @@ export default function VodCard({
               </>
             )}
             <div className="ml-auto flex gap-1.5">
-              {onEdit && <ActionBtn onClick={onEdit}>✎ Editar</ActionBtn>}
+              {onEdit && (
+                <ActionBtn onClick={() => onEdit(vod)}>✎ Editar</ActionBtn>
+              )}
               <ActionBtn onClick={handleRemove} danger={confirming}>
                 {confirming ? "¿Confirmar?" : "✕ Quitar"}
               </ActionBtn>
