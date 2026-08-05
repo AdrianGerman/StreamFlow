@@ -14,6 +14,7 @@ export default function EditingView({
   advancePhase,
   regressPhase,
   removeVod,
+  reorderVods,
 }) {
   return (
     <BucketView
@@ -23,10 +24,11 @@ export default function EditingView({
       emptyText="Sin videos en edición. Mueve una idea cuando estés listo para editar."
       vods={buckets.editing ?? []}
       destinations={DESTINATIONS}
-      onUpdate={updateVod}
       onAdd={(data) => addVod("editing", data)}
+      onUpdate={updateVod}
       onMove={moveVod}
       onRemove={removeVod}
+      onReorder={reorderVods}
       onAdvance={(vodId, phase) => advancePhase(vodId, phase, TOTAL_PHASES)}
       onRegress={regressPhase}
     >
@@ -43,7 +45,7 @@ export default function EditingView({
           >
             <span
               className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0"
-              style={{ background: "var(--sf-green)" }}
+              style={{ background: "var(--sf-primary)" }}
             >
               {p.id}
             </span>

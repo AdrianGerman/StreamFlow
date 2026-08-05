@@ -8,6 +8,7 @@ export default function ShortsView({
   updateVod,
   moveVod,
   removeVod,
+  reorderVods,
 }) {
   return (
     <BucketView
@@ -21,6 +22,7 @@ export default function ShortsView({
       onUpdate={updateVod}
       onMove={moveVod}
       onRemove={removeVod}
+      onReorder={reorderVods}
     />
   )
 }

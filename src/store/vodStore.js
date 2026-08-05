@@ -143,11 +143,14 @@ export function useVodStore() {
     }))
   }, [])
 
-  const reorderVods = useCallback((bucketId, fromIndex, toIndex) => {
+  const reorderVods = useCallback((bucketId, fromId, toId) => {
     setBuckets((prev) => {
       const list = [...prev[bucketId]]
-      const [moved] = list.splice(fromIndex, 1)
-      list.splice(toIndex, 0, moved)
+      const fromIdx = list.findIndex((v) => v.id === fromId)
+      const toIdx = list.findIndex((v) => v.id === toId)
+      if (fromIdx === -1 || toIdx === -1) return prev
+      const [moved] = list.splice(fromIdx, 1)
+      list.splice(toIdx, 0, moved)
       return { ...prev, [bucketId]: list }
     })
   }, [])

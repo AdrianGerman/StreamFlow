@@ -17,13 +17,13 @@ export default function ContentView({
   updateVod,
   moveVod,
   removeVod,
+  reorderVods,
 }) {
   const [activeType, setActiveType] = useState("stream")
 
   const all = buckets.inbox ?? []
   const streams = all.filter((v) => (v.contentType ?? "stream") === "stream")
   const recordings = all.filter((v) => v.contentType === "recording")
-
   const current = activeType === "stream" ? streams : recordings
 
   const config = {
@@ -92,6 +92,7 @@ export default function ContentView({
         onUpdate={updateVod}
         onMove={moveVod}
         onRemove={removeVod}
+        onReorder={reorderVods}
       />
     </>
   )
