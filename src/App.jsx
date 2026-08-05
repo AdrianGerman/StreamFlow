@@ -26,6 +26,7 @@ export default function App() {
     advancePhase,
     regressPhase,
     removeVod,
+    reorderVods,
   } = useVodStore()
   const [showDataManager, setShowDataManager] = useState(false)
 
@@ -42,6 +43,7 @@ export default function App() {
             updateVod={updateVod}
             moveVod={moveVod}
             removeVod={removeVod}
+            reorderVods={reorderVods}
           />
         )
       case "ideas":
@@ -53,6 +55,7 @@ export default function App() {
             updateVod={updateVod}
             moveVod={moveVod}
             removeVod={removeVod}
+            reorderVods={reorderVods}
           />
         )
       case "editing":
@@ -66,6 +69,7 @@ export default function App() {
             advancePhase={advancePhase}
             regressPhase={regressPhase}
             removeVod={removeVod}
+            reorderVods={reorderVods}
           />
         )
       case "shorts":
@@ -77,6 +81,7 @@ export default function App() {
             updateVod={updateVod}
             moveVod={moveVod}
             removeVod={removeVod}
+            reorderVods={reorderVods}
           />
         )
       case "trash":
