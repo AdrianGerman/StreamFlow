@@ -66,20 +66,21 @@ export function PhaseRow({ n, currentPhase }) {
   const done = n < currentPhase
   const active = n === currentPhase
   const labels = ["Cortar", "Zoom y edición", "Música", "Intro y outro"]
-
   return (
     <div
       className="flex items-center gap-3 rounded-lg px-3 py-2"
       style={{
         background: done || active ? "var(--sf-edit-bg)" : "var(--code-bg)",
-        border: active ? "1px solid var(--sf-green)" : "1px solid transparent",
+        border: active
+          ? "1px solid var(--sf-primary)"
+          : "1px solid transparent",
         opacity: n > currentPhase ? 0.5 : 1,
       }}
     >
       <span
-        className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 text-white"
+        className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 text-white"
         style={{
-          background: done || active ? "var(--sf-green)" : "var(--border)",
+          background: done || active ? "var(--sf-primary)" : "var(--border)",
         }}
       >
         {done ? "✓" : n}
@@ -104,5 +105,42 @@ export function SectionTitle({ children }) {
     >
       {children}
     </p>
+  )
+}
+
+export function DaysSinceUpload({ data, onClick }) {
+  if (!data) return null
+  const { days } = data
+  const color =
+    days === 0 ? "var(--sf-primary)" : days <= 3 ? "#f5a623" : "var(--danger)"
+  const message =
+    days === 0
+      ? "¡Subiste contenido hoy! 🔥"
+      : days === 1
+        ? "Ayer completaste un ciclo"
+        : `${days} días sin completar un ciclo`
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left cursor-pointer transition-all duration-150 hover:border-(--accent-border)"
+      style={{ background: "var(--bg)", borderColor: "var(--border)" }}
+    >
+      <span className="text-xl">📅</span>
+      <div className="flex-1">
+        <p
+          className="text-[13px] font-medium"
+          style={{ color: "var(--text-h)" }}
+        >
+          {message}
+        </p>
+        <p className="text-[11px] mt-0.5" style={{ color: "var(--text)" }}>
+          Último ciclo completado
+        </p>
+      </div>
+      <span className="text-[14px] font-bold" style={{ color }}>
+        {days}d
+      </span>
+    </button>
   )
 }
