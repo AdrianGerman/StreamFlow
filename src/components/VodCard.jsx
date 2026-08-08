@@ -115,6 +115,12 @@ export default function VodCard({
           </a>
         )}
 
+        {vod.playlist && (
+          <p className="text-[11px] mt-1" style={{ color: "var(--text)" }}>
+            📋 {vod.playlist}
+          </p>
+        )}
+
         {vod.notes && (
           <p
             className="text-[12px] leading-relaxed mt-2 px-3 py-2 rounded-lg"
