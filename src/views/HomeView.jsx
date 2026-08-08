@@ -1,5 +1,6 @@
 import { useTodaySuggestions } from "../hooks/useTodaySuggestions"
 import { useWeeklyStats } from "../hooks/useWeeklyStats"
+import { useDaysSinceUpload } from "../hooks/useDaysSinceUpload"
 import WeeklySummary from "../components/WeeklySummary"
 import QuickNotes from "../components/QuickNotes"
 import {
@@ -7,12 +8,14 @@ import {
   TodayItem,
   PhaseRow,
   SectionTitle,
+  DaysSinceUpload,
 } from "../components/HomeWidgets"
 import { TOTAL_PHASES } from "../constants/phases"
 
 export default function HomeView({ buckets, onNavigate }) {
   const suggestions = useTodaySuggestions(buckets)
   const weeklyStats = useWeeklyStats(buckets)
+  const daysSince = useDaysSinceUpload(buckets)
 
   const editingVods = buckets.editing ?? []
   const activeEdit = editingVods[0] ?? null
@@ -43,7 +46,7 @@ export default function HomeView({ buckets, onNavigate }) {
 
       <WeeklySummary stats={weeklyStats} onNavigate={onNavigate} />
 
-      <div className="grid grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-4 gap-3 mb-3">
         <StatCard
           label="Sin clasificar"
           value={inboxCount}
@@ -73,6 +76,10 @@ export default function HomeView({ buckets, onNavigate }) {
           onClick={() => onNavigate("trash")}
           warn={trashCount > 0}
         />
+      </div>
+
+      <div className="mb-6">
+        <DaysSinceUpload data={daysSince} onClick={() => onNavigate("trash")} />
       </div>
 
       <div className="grid grid-cols-[1fr_300px] gap-6 items-start mb-6">
@@ -107,7 +114,7 @@ export default function HomeView({ buckets, onNavigate }) {
           </div>
         </div>
 
-        <div>
+        <div className="flex flex-col gap-4">
           {activeEdit ? (
             <>
               <SectionTitle>Edición actual</SectionTitle>
