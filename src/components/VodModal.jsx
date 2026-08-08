@@ -23,6 +23,7 @@ export default function VodModal({
   const [notes, setNotes] = useState(initialData?.notes ?? "")
   const [tags, setTags] = useState(initialData?.tags ?? [])
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl ?? "")
+  const [playlist, setPlaylist] = useState(initialData?.playlist ?? "")
 
   const isEdit = mode === "edit"
 
@@ -42,6 +43,7 @@ export default function VodModal({
       notes,
       tags,
       youtubeUrl,
+      playlist,
     })
   }
 
@@ -82,10 +84,12 @@ export default function VodModal({
                 style={{
                   background:
                     contentType === ct.id
-                      ? "var(--sf-green-dim)"
+                      ? "var(--sf-primary-dim)"
                       : "var(--code-bg)",
                   borderColor:
-                    contentType === ct.id ? "var(--sf-green)" : "var(--border)",
+                    contentType === ct.id
+                      ? "var(--sf-primary)"
+                      : "var(--border)",
                   color:
                     contentType === ct.id
                       ? "var(--sf-edit-text)"
@@ -155,6 +159,19 @@ export default function VodModal({
           />
         </Field>
 
+        <Field label="Playlist de YouTube">
+          <input
+            value={playlist}
+            onChange={(e) => setPlaylist(e.target.value)}
+            placeholder="ej: Temporada 3 — Ranked / Mejores jugadas"
+            className={inputCls}
+            style={inputStyle}
+          />
+          <p className="text-[11px] mt-1" style={{ color: "var(--text)" }}>
+            Playlist donde va este video o VOD en tu canal.
+          </p>
+        </Field>
+
         <Field label="Notas e ideas">
           <textarea
             value={notes}
@@ -209,7 +226,7 @@ export default function VodModal({
             onClick={handleSubmit}
             disabled={!title.trim()}
             className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white transition-opacity disabled:opacity-40"
-            style={{ background: "var(--sf-green)" }}
+            style={{ background: "var(--sf-primary)" }}
           >
             {isEdit ? "Guardar cambios" : "Agregar"}
           </button>
