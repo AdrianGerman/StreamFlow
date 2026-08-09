@@ -1,4 +1,5 @@
 import { useDataBackup } from "../hooks/useDataBackup"
+import DeleteSection from "./DeleteSection"
 
 export default function DataManager({ onClose }) {
   const { exportBackup, importBackup } = useDataBackup()
@@ -16,7 +17,7 @@ export default function DataManager({ onClose }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="rounded-2xl p-6 w-[380px]"
+        className="rounded-2xl p-6 w-[400px] max-h-[90vh] overflow-y-auto"
         style={{ background: "var(--bg)", boxShadow: "var(--shadow)" }}
       >
         <h2
@@ -26,8 +27,7 @@ export default function DataManager({ onClose }) {
           Datos y backup
         </h2>
         <p className="text-[12px] mb-5" style={{ color: "var(--text)" }}>
-          Exporta tus datos para hacer un backup o restaurarlos en otro
-          dispositivo.
+          Exporta, restaura o borra tus datos de StreamFlow.
         </p>
 
         <div
@@ -46,14 +46,14 @@ export default function DataManager({ onClose }) {
           <button
             onClick={exportBackup}
             className="w-full py-2 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white transition-opacity hover:opacity-90"
-            style={{ background: "var(--sf-green)" }}
+            style={{ background: "var(--sf-primary)" }}
           >
             Descargar backup
           </button>
         </div>
 
         <div
-          className="rounded-xl p-4 border mb-5"
+          className="rounded-xl p-4 border mb-3"
           style={{ background: "var(--code-bg)", borderColor: "var(--border)" }}
         >
           <p
@@ -63,7 +63,7 @@ export default function DataManager({ onClose }) {
             📥 Restaurar backup
           </p>
           <p className="text-[12px] mb-3" style={{ color: "var(--text)" }}>
-            Carga un archivo de backup previo. Esto reemplazará todos los datos
+            Carga un archivo de backup previo. Reemplaza todos los datos
             actuales.
           </p>
           <label
@@ -82,6 +82,10 @@ export default function DataManager({ onClose }) {
               className="hidden"
             />
           </label>
+        </div>
+
+        <div className="mb-5">
+          <DeleteSection onDeleted={() => window.location.reload()} />
         </div>
 
         <button
