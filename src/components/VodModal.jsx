@@ -2,6 +2,7 @@ import { useState } from "react"
 import { TAGS } from "../constants/tags"
 import { CONTENT_TYPES } from "../constants/contentTypes"
 import TagBadge from "./TagBadge"
+import ModalShell, { ModalHeader, ModalBody, ModalFooter } from "./ModalShell"
 
 export default function VodModal({
   mode = "create",
@@ -48,32 +49,14 @@ export default function VodModal({
   }
 
   return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm"
-      style={{ background: "rgba(0,0,0,0.4)" }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="rounded-2xl p-6 w-[440px] max-h-[90vh] overflow-y-auto"
-        style={{ background: "var(--bg)", boxShadow: "var(--shadow)" }}
-      >
-        <h2
-          className="text-[15px] font-semibold m-0 mb-0.5"
-          style={{ color: "var(--text-h)" }}
-        >
-          {isEdit ? "Editar VOD" : "Agregar VOD"}
-        </h2>
-        <p className="text-[12px] m-0 mb-5" style={{ color: "var(--text)" }}>
-          {isEdit ? (
-            "Modifica los datos del VOD."
-          ) : (
-            <>
-              en <strong>{bucketLabel}</strong>
-            </>
-          )}
-        </p>
-
+    <ModalShell onClose={onClose}>
+      <ModalHeader
+        title={isEdit ? "Editar VOD" : "Agregar VOD"}
+        sub={
+          isEdit ? "Modifica los datos del VOD." : `Agregando en ${bucketLabel}`
+        }
+      />
+      <ModalBody>
         <Field label="Tipo de contenido">
           <div className="flex gap-2">
             {CONTENT_TYPES.map((ct) => (
@@ -123,9 +106,6 @@ export default function VodModal({
             className={inputCls}
             style={inputStyle}
           />
-          <p className="text-[11px] mt-1" style={{ color: "var(--text)" }}>
-            El nombre creativo del video que vas a publicar.
-          </p>
         </Field>
 
         <div className="flex gap-2.5">
@@ -138,7 +118,7 @@ export default function VodModal({
               style={inputStyle}
             />
           </Field>
-          <Field label="Fecha del stream" className="flex-1">
+          <Field label="Fecha" className="flex-1">
             <input
               type="date"
               value={date}
@@ -163,20 +143,17 @@ export default function VodModal({
           <input
             value={playlist}
             onChange={(e) => setPlaylist(e.target.value)}
-            placeholder="ej: Temporada 3 — Ranked / Mejores jugadas"
+            placeholder="ej: Temporada 3 — Ranked"
             className={inputCls}
             style={inputStyle}
           />
-          <p className="text-[11px] mt-1" style={{ color: "var(--text)" }}>
-            Playlist donde va este video o VOD en tu canal.
-          </p>
         </Field>
 
         <Field label="Notas e ideas">
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Momentos destacados, ideas para el video, contexto..."
+            placeholder="Momentos destacados, ideas para el video..."
             rows={3}
             className={`${inputCls} resize-y`}
             style={inputStyle}
@@ -209,30 +186,30 @@ export default function VodModal({
             ))}
           </div>
         </Field>
+      </ModalBody>
 
-        <div className="flex gap-2 mt-5">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border transition-colors duration-150"
-            style={{
-              borderColor: "var(--border)",
-              color: "var(--text)",
-              background: "var(--bg)",
-            }}
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!title.trim()}
-            className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white transition-opacity disabled:opacity-40"
-            style={{ background: "var(--sf-primary)" }}
-          >
-            {isEdit ? "Guardar cambios" : "Agregar"}
-          </button>
-        </div>
-      </div>
-    </div>
+      <ModalFooter>
+        <button
+          onClick={onClose}
+          className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border transition-colors duration-150"
+          style={{
+            borderColor: "var(--border)",
+            color: "var(--text)",
+            background: "transparent",
+          }}
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={!title.trim()}
+          className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white transition-opacity disabled:opacity-40"
+          style={{ background: "var(--sf-primary)" }}
+        >
+          {isEdit ? "Guardar cambios" : "Agregar"}
+        </button>
+      </ModalFooter>
+    </ModalShell>
   )
 }
 

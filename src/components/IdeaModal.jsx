@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { TAGS } from "../constants/tags"
 import TagBadge from "./TagBadge"
+import ModalShell, { ModalHeader, ModalBody, ModalFooter } from "./ModalShell"
 
 export default function IdeaModal({
   mode = "create",
@@ -23,12 +24,9 @@ export default function IdeaModal({
     setTags((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id],
     )
-
   const updateMoment = (i, val) =>
     setMoments((prev) => prev.map((m, idx) => (idx === i ? val : m)))
-
   const addMoment = () => setMoments((prev) => [...prev, ""])
-
   const removeMoment = (i) =>
     setMoments((prev) =>
       prev.length === 1 ? [""] : prev.filter((_, idx) => idx !== i),
@@ -46,27 +44,23 @@ export default function IdeaModal({
     })
   }
 
-  return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm"
-      style={{ background: "rgba(0,0,0,0.4)" }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="rounded-2xl p-6 w-[440px] max-h-[90vh] overflow-y-auto"
-        style={{ background: "var(--bg)", boxShadow: "var(--shadow)" }}
-      >
-        <h2
-          className="text-[15px] font-semibold mb-0.5"
-          style={{ color: "var(--text-h)" }}
-        >
-          {isEdit ? "Editar idea" : "Nueva idea"}
-        </h2>
-        <p className="text-[12px] mb-5" style={{ color: "var(--text)" }}>
-          Plasma la idea antes de organizarla en el flujo.
-        </p>
+  const inputStyle = {
+    padding: "7px 10px",
+    borderColor: "var(--border)",
+    background: "var(--code-bg)",
+    color: "var(--text-h)",
+  }
+  const inputCls =
+    "w-full text-[13px] rounded-lg border outline-none font-[inherit] transition-colors duration-150"
 
+  return (
+    <ModalShell onClose={onClose}>
+      <ModalHeader
+        title={isEdit ? "Editar idea" : "Nueva idea"}
+        sub="Plasma la idea antes de organizarla en el flujo."
+        accentColor="#6d28d9"
+      />
+      <ModalBody>
         <Field label="VOD de origen">
           <input
             value={vodRef}
@@ -75,9 +69,6 @@ export default function IdeaModal({
             className={inputCls}
             style={inputStyle}
           />
-          <p className="text-[11px] mt-1" style={{ color: "var(--text)" }}>
-            El stream o grabación del que sale esta idea.
-          </p>
         </Field>
 
         <Field label="Idea del video *">
@@ -115,7 +106,7 @@ export default function IdeaModal({
                 />
                 <button
                   onClick={() => removeMoment(i)}
-                  className="text-[12px] px-2 py-1 rounded-lg border cursor-pointer transition-colors duration-150"
+                  className="text-[12px] px-2 py-1.5 rounded-lg border cursor-pointer transition-colors"
                   style={{
                     borderColor: "var(--border)",
                     color: "var(--text)",
@@ -128,7 +119,7 @@ export default function IdeaModal({
             ))}
             <button
               onClick={addMoment}
-              className="text-[12px] font-medium py-1.5 rounded-lg border border-dashed cursor-pointer transition-colors duration-150 hover:border-(--sf-primary)"
+              className="text-[12px] font-medium py-1.5 rounded-lg border border-dashed cursor-pointer transition-colors hover:border-(--sf-primary)"
               style={{
                 borderColor: "var(--border)",
                 color: "var(--text)",
@@ -177,30 +168,30 @@ export default function IdeaModal({
             ))}
           </div>
         </Field>
+      </ModalBody>
 
-        <div className="flex gap-2 mt-5">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border"
-            style={{
-              borderColor: "var(--border)",
-              color: "var(--text)",
-              background: "var(--bg)",
-            }}
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!videoTitle.trim()}
-            className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white transition-opacity disabled:opacity-40"
-            style={{ background: "var(--sf-primary)" }}
-          >
-            {isEdit ? "Guardar cambios" : "Agregar idea"}
-          </button>
-        </div>
-      </div>
-    </div>
+      <ModalFooter>
+        <button
+          onClick={onClose}
+          className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border"
+          style={{
+            borderColor: "var(--border)",
+            color: "var(--text)",
+            background: "transparent",
+          }}
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={!videoTitle.trim()}
+          className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white disabled:opacity-40"
+          style={{ background: "var(--sf-primary)" }}
+        >
+          {isEdit ? "Guardar cambios" : "Agregar idea"}
+        </button>
+      </ModalFooter>
+    </ModalShell>
   )
 }
 
@@ -216,13 +207,4 @@ function Field({ label, children }) {
       {children}
     </div>
   )
-}
-
-const inputCls =
-  "w-full text-[13px] rounded-lg border outline-none font-[inherit] transition-colors duration-150"
-const inputStyle = {
-  padding: "7px 10px",
-  borderColor: "var(--border)",
-  background: "var(--code-bg)",
-  color: "var(--text-h)",
 }
