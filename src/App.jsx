@@ -106,7 +106,7 @@ export default function App() {
       style={{ background: "var(--sf-bg)", fontFamily: "var(--sans)" }}
     >
       <header
-        className="h-[50px] flex items-center justify-between px-5 sticky top-0 z-10 shrink-0"
+        className="h-[52px] flex items-center justify-between px-6 sticky top-0 z-10 shrink-0"
         style={{
           background: "var(--bg)",
           borderBottom: "1px solid var(--border)",
@@ -114,16 +114,16 @@ export default function App() {
       >
         <button
           onClick={() => navigate("home")}
-          className="flex items-center gap-2 cursor-pointer bg-transparent border-none p-0"
+          className="flex items-center gap-2.5 cursor-pointer bg-transparent border-none p-0 group"
         >
           <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs shrink-0"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm shrink-0 transition-transform duration-150 group-hover:scale-95"
             style={{ background: "var(--sf-primary)" }}
           >
             🎬
           </div>
           <span
-            className="text-[14px] font-semibold tracking-tight"
+            className="text-[15px] font-bold tracking-tight"
             style={{ color: "var(--text-h)" }}
           >
             Stream<span style={{ color: "var(--sf-primary)" }}>Flow</span>
@@ -143,8 +143,7 @@ export default function App() {
           </span>
           <button
             onClick={() => setShowDataManager(true)}
-            title="Backup y datos"
-            className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-colors duration-150 hover:bg-(--code-bg)"
+            className="text-[11px] font-medium px-3 py-1.5 rounded-lg border cursor-pointer transition-all duration-150 hover:border-(--accent-border) hover:text-(--accent)"
             style={{
               borderColor: "var(--border)",
               color: "var(--text)",
@@ -157,7 +156,7 @@ export default function App() {
       </header>
 
       <nav
-        className="flex shrink-0 overflow-x-auto"
+        className="flex shrink-0 overflow-x-auto px-2"
         style={{
           background: "var(--bg)",
           borderBottom: "1px solid var(--border)",
@@ -170,7 +169,7 @@ export default function App() {
             <button
               key={tab.id}
               onClick={() => navigate(tab.id)}
-              className="flex items-center gap-1.5 px-3 py-2.5 text-[12px] border-b-2 cursor-pointer border-t-0 border-x-0 bg-transparent transition-all duration-150 whitespace-nowrap"
+              className="flex items-center gap-1.5 px-3.5 py-3 text-[12.5px] border-b-2 cursor-pointer border-t-0 border-x-0 bg-transparent transition-all duration-150 whitespace-nowrap"
               style={{
                 borderBottomColor: isActive
                   ? "var(--sf-primary)"
@@ -182,7 +181,7 @@ export default function App() {
               {tab.label}
               {count !== null && count > 0 && (
                 <span
-                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-colors duration-150"
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
                   style={{
                     background: isActive
                       ? "var(--sf-primary)"
@@ -199,7 +198,7 @@ export default function App() {
       </nav>
 
       <main className="flex-1 overflow-y-auto">
-        <div className="w-full max-w-5xl mx-auto px-6 py-5">{view()}</div>
+        <div className="w-full max-w-5xl mx-auto px-6 py-6">{view()}</div>
       </main>
 
       {showDataManager && (
