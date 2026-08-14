@@ -5,11 +5,17 @@ import IdeaCard from "../components/IdeaCard"
 import IdeaModal from "../components/IdeaModal"
 import { useSearchVods } from "../hooks/useSearchVods"
 
-const FILTERS = [
+const TAG_FILTERS = [
   { id: "all", label: "Todas" },
   { id: "video", label: "Video largo" },
   { id: "short", label: "Short" },
   { id: "tiktok", label: "TikTok" },
+]
+
+const TYPE_FILTERS = [
+  { id: "all", label: "Todo" },
+  { id: "stream", label: "🎮 Streams" },
+  { id: "recording", label: "🎥 Grabaciones" },
 ]
 
 export default function IdeasView({
@@ -21,23 +27,30 @@ export default function IdeasView({
 }) {
   const [showModal, setShowModal] = useState(false)
   const [editingIdea, setEditingIdea] = useState(null)
-  const [filter, setFilter] = useState("all")
+  const [tagFilter, setTagFilter] = useState("all")
+  const [typeFilter, setTypeFilter] = useState("all")
 
   const all = buckets.ideas ?? []
-  const filtered =
-    filter === "all" ? all : all.filter((v) => v.tags?.includes(filter))
+
+  const filtered = all
+    .filter((v) => tagFilter === "all" || v.tags?.includes(tagFilter))
+    .filter(
+      (v) => typeFilter === "all" || (v.contentType ?? "stream") === typeFilter,
+    )
+
   const { filtered: searched, query, setQuery } = useSearchVods(filtered)
 
   const handleCreate = (data) => {
     addVod("ideas", data)
     setShowModal(false)
   }
-
   const handleUpdate = (data) => {
     if (!editingIdea) return
     updateVod("ideas", editingIdea.id, data)
     setEditingIdea(null)
   }
+
+  const activeFilter = TAG_FILTERS.find((f) => f.id === tagFilter)
 
   return (
     <>
@@ -48,17 +61,57 @@ export default function IdeasView({
         onAdd={() => setShowModal(true)}
       />
 
-      <div className="flex gap-2 mb-4 flex-wrap">
-        {FILTERS.map((f) => (
+      <div
+        className="flex gap-1 mb-3 p-1 rounded-xl w-fit"
+        style={{ background: "var(--code-bg)" }}
+      >
+        {TYPE_FILTERS.map((f) => {
+          const count =
+            f.id === "all"
+              ? all.length
+              : all.filter((v) => (v.contentType ?? "stream") === f.id).length
+          const isActive = typeFilter === f.id
+          return (
+            <button
+              key={f.id}
+              onClick={() => setTypeFilter(f.id)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium cursor-pointer border-none transition-all duration-150"
+              style={{
+                background: isActive ? "var(--bg)" : "transparent",
+                color: isActive ? "var(--sf-primary)" : "var(--text)",
+                boxShadow: isActive ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+              }}
+            >
+              {f.label}
+              {count > 0 && (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                  style={{
+                    background: isActive
+                      ? "var(--sf-primary)"
+                      : "var(--border)",
+                    color: isActive ? "#fff" : "var(--text)",
+                  }}
+                >
+                  {count}
+                </span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="flex gap-2 mb-4 flex-wrap items-center">
+        {TAG_FILTERS.map((f) => (
           <button
             key={f.id}
-            onClick={() => setFilter(f.id)}
+            onClick={() => setTagFilter(f.id)}
             className="text-[12px] font-medium px-3 py-1.5 rounded-full border cursor-pointer transition-all duration-150"
             style={{
               background:
-                filter === f.id ? "var(--sf-primary)" : "var(--code-bg)",
-              color: filter === f.id ? "#fff" : "var(--text)",
-              borderColor: filter === f.id ? "transparent" : "var(--border)",
+                tagFilter === f.id ? "var(--sf-primary)" : "var(--code-bg)",
+              color: tagFilter === f.id ? "#fff" : "var(--text)",
+              borderColor: tagFilter === f.id ? "transparent" : "var(--border)",
             }}
           >
             {f.label}
@@ -97,11 +150,15 @@ export default function IdeasView({
           text={
             query
               ? `Sin resultados para "${query}".`
-              : filter !== "all"
-                ? `Sin ideas de tipo "${FILTERS.find((f) => f.id === filter)?.label}".`
+              : tagFilter !== "all" || typeFilter !== "all"
+                ? `Sin ideas con ese filtro.`
                 : "Sin ideas todavía. Agrega una para empezar."
           }
-          onAdd={!query && filter === "all" ? () => setShowModal(true) : null}
+          onAdd={
+            !query && tagFilter === "all" && typeFilter === "all"
+              ? () => setShowModal(true)
+              : null
+          }
         />
       ) : (
         <div className="flex flex-col gap-2.5">
