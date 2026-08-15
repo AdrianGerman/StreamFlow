@@ -1,4 +1,3 @@
-import { useState } from "react"
 import TagBadge from "./TagBadge"
 import PhaseBar from "./PhaseBar"
 import ShortsTracker from "./ShortsTracker"
@@ -6,6 +5,7 @@ import ShortsModal from "./ShortsModal"
 import ActionBtn from "./ActionBtn"
 import { CONTENT_TYPE_MAP } from "../constants/contentTypes"
 import { formatDate } from "../utils/date"
+import { useVodCardActions } from "../hooks/useVodCardActions"
 
 export default function VodCard({
   vod,
@@ -18,47 +18,28 @@ export default function VodCard({
   onRemove,
   onUpdate,
 }) {
-  const [hovered, setHovered] = useState(false)
-  const [confirming, setConfirming] = useState(false)
-  const [shortsTarget, setShortsTarget] = useState(null)
+  const {
+    hovered,
+    confirming,
+    shortsTarget,
+    handleMouseEnter,
+    handleMouseLeave,
+    handleRemove,
+    handleMove,
+    handleShortsConfirm,
+    handleShortsCancel,
+  } = useVodCardActions({ vod, bucketId, onMove, onRemove })
 
   const isEditing = bucketId === "editing"
   const isShorts = bucketId === "shorts"
   const isTrash = bucketId === "trash"
   const ct = CONTENT_TYPE_MAP[vod.contentType ?? "stream"]
 
-  const handleRemove = () => {
-    if (!confirming) {
-      setConfirming(true)
-      return
-    }
-    onRemove(bucketId, vod.id)
-  }
-
-  const handleMove = (destId) => {
-    if (destId === "shorts") {
-      setShortsTarget(destId)
-      return
-    }
-    onMove(vod.id, bucketId, destId)
-  }
-
-  const handleShortsConfirm = (count) => {
-    onMove(vod.id, bucketId, shortsTarget, {
-      shortsCount: count,
-      shortsPosted: 0,
-    })
-    setShortsTarget(null)
-  }
-
   return (
     <>
       <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => {
-          setHovered(false)
-          setConfirming(false)
-        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className="rounded-xl transition-all duration-200"
         style={{
           background: "var(--bg)",
@@ -163,37 +144,13 @@ export default function VodCard({
           )}
 
           {hovered && !isTrash && (
-            <div
-              className="flex items-center gap-1.5 flex-wrap mt-3 pt-2.5"
-              style={{ borderTop: "1px solid var(--border)" }}
-            >
-              {destinations.length > 0 && (
-                <>
-                  <span
-                    className="text-[10px] font-medium mr-0.5"
-                    style={{ color: "var(--text)" }}
-                  >
-                    Mover a:
-                  </span>
-                  {destinations.map((dest) => (
-                    <ActionBtn
-                      key={dest.id}
-                      onClick={() => handleMove(dest.id)}
-                    >
-                      {dest.label} →
-                    </ActionBtn>
-                  ))}
-                </>
-              )}
-              <div className="ml-auto flex gap-1.5">
-                {onEdit && (
-                  <ActionBtn onClick={() => onEdit(vod)}>✎ Editar</ActionBtn>
-                )}
-                <ActionBtn onClick={handleRemove} danger={confirming}>
-                  {confirming ? "¿Confirmar?" : "✕ Quitar"}
-                </ActionBtn>
-              </div>
-            </div>
+            <VodCardActions
+              destinations={destinations}
+              onMove={handleMove}
+              onEdit={onEdit ? () => onEdit(vod) : null}
+              onRemove={handleRemove}
+              confirming={confirming}
+            />
           )}
 
           {hovered && isTrash && (
@@ -215,9 +172,46 @@ export default function VodCard({
         <ShortsModal
           vod={vod}
           onConfirm={handleShortsConfirm}
-          onClose={() => setShortsTarget(null)}
+          onClose={handleShortsCancel}
         />
       )}
     </>
+  )
+}
+
+function VodCardActions({
+  destinations,
+  onMove,
+  onEdit,
+  onRemove,
+  confirming,
+}) {
+  return (
+    <div
+      className="flex items-center gap-1.5 flex-wrap mt-3 pt-2.5"
+      style={{ borderTop: "1px solid var(--border)" }}
+    >
+      {destinations.length > 0 && (
+        <>
+          <span
+            className="text-[10px] font-medium mr-0.5"
+            style={{ color: "var(--text)" }}
+          >
+            Mover a:
+          </span>
+          {destinations.map((dest) => (
+            <ActionBtn key={dest.id} onClick={() => onMove(dest.id)}>
+              {dest.label} →
+            </ActionBtn>
+          ))}
+        </>
+      )}
+      <div className="ml-auto flex gap-1.5">
+        {onEdit && <ActionBtn onClick={onEdit}>✎ Editar</ActionBtn>}
+        <ActionBtn onClick={onRemove} danger={confirming}>
+          {confirming ? "¿Confirmar?" : "✕ Quitar"}
+        </ActionBtn>
+      </div>
+    </div>
   )
 }
