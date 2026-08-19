@@ -78,43 +78,50 @@ export default function HomeView({ buckets, onNavigate }) {
         />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <DaysSinceUpload data={daysSince} onClick={() => onNavigate("trash")} />
       </div>
 
-      <div className="grid grid-cols-[1fr_300px] gap-6 items-start mb-6">
-        <div>
+      <div
+        className="grid grid-cols-[1fr_300px] gap-4 mb-6"
+        style={{ maxHeight: 380 }}
+      >
+        <div
+          className="flex flex-col gap-2 overflow-y-auto pr-1"
+          style={{ maxHeight: 380 }}
+        >
           <SectionTitle>Sugerido para hoy</SectionTitle>
-          <div className="flex flex-col gap-2">
-            {suggestions.length === 0 ? (
-              <div
-                className="rounded-xl px-4 py-8 text-center border border-dashed"
-                style={{ borderColor: "var(--border)" }}
+          {suggestions.length === 0 ? (
+            <div
+              className="rounded-xl px-4 py-8 text-center border border-dashed"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <p className="text-2xl mb-2">🎉</p>
+              <p
+                className="text-sm font-medium mb-1"
+                style={{ color: "var(--text-h)" }}
               >
-                <p className="text-2xl mb-2">🎉</p>
-                <p
-                  className="text-sm font-medium mb-1"
-                  style={{ color: "var(--text-h)" }}
-                >
-                  Todo al día
-                </p>
-                <p className="text-[13px]" style={{ color: "var(--text)" }}>
-                  Agrega un VOD nuevo para empezar.
-                </p>
-              </div>
-            ) : (
-              suggestions.map((s) => (
-                <TodayItem
-                  key={s.id}
-                  suggestion={s}
-                  onClick={() => onNavigate(s.navigate)}
-                />
-              ))
-            )}
-          </div>
+                Todo al día
+              </p>
+              <p className="text-[13px]" style={{ color: "var(--text)" }}>
+                Agrega un VOD nuevo para empezar.
+              </p>
+            </div>
+          ) : (
+            suggestions.map((s) => (
+              <TodayItem
+                key={s.id}
+                suggestion={s}
+                onClick={() => onNavigate(s.navigate)}
+              />
+            ))
+          )}
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div
+          className="flex flex-col gap-3 overflow-y-auto pr-1"
+          style={{ maxHeight: 380 }}
+        >
           {activeEdit ? (
             <>
               <SectionTitle>Edición actual</SectionTitle>
@@ -142,42 +149,40 @@ export default function HomeView({ buckets, onNavigate }) {
           ) : (
             <>
               <SectionTitle>Acceso rápido</SectionTitle>
-              <div className="flex flex-col gap-2">
-                {[
-                  {
-                    id: "content",
-                    icon: "🎮",
-                    label: "Contenido sin clasificar",
-                  },
-                  { id: "ideas", icon: "💡", label: "Ideas de contenido" },
-                  { id: "editing", icon: "✂️", label: "En edición" },
-                  { id: "shorts", icon: "📱", label: "Pool de shorts" },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => onNavigate(item.id)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl border text-left cursor-pointer transition-colors duration-150 hover:border-(--accent-border) w-full bg-transparent"
-                    style={{
-                      background: "var(--bg)",
-                      borderColor: "var(--border)",
-                    }}
+              {[
+                {
+                  id: "content",
+                  icon: "🎮",
+                  label: "Contenido sin clasificar",
+                },
+                { id: "ideas", icon: "💡", label: "Ideas de contenido" },
+                { id: "editing", icon: "✂️", label: "En edición" },
+                { id: "shorts", icon: "📱", label: "Pool de shorts" },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onNavigate(item.id)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl border text-left cursor-pointer transition-colors duration-150 hover:border-(--accent-border) w-full bg-transparent"
+                  style={{
+                    background: "var(--bg)",
+                    borderColor: "var(--border)",
+                  }}
+                >
+                  <span className="text-base">{item.icon}</span>
+                  <span
+                    className="text-[13px] font-medium"
+                    style={{ color: "var(--text-h)" }}
                   >
-                    <span className="text-base">{item.icon}</span>
-                    <span
-                      className="text-[13px] font-medium"
-                      style={{ color: "var(--text-h)" }}
-                    >
-                      {item.label}
-                    </span>
-                    <span
-                      className="ml-auto text-[12px]"
-                      style={{ color: "var(--text)" }}
-                    >
-                      →
-                    </span>
-                  </button>
-                ))}
-              </div>
+                    {item.label}
+                  </span>
+                  <span
+                    className="ml-auto text-[12px]"
+                    style={{ color: "var(--text)" }}
+                  >
+                    →
+                  </span>
+                </button>
+              ))}
             </>
           )}
         </div>
