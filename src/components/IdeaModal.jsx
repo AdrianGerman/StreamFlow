@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { TAGS } from "../constants/tags"
+import { CONTENT_TYPES } from "../constants/contentTypes"
 import TagBadge from "./TagBadge"
 import ModalShell, { ModalHeader, ModalBody, ModalFooter } from "./ModalShell"
 
@@ -11,6 +12,9 @@ export default function IdeaModal({
 }) {
   const [vodRef, setVodRef] = useState(initialData?.vodRef ?? "")
   const [videoTitle, setVideoTitle] = useState(initialData?.videoTitle ?? "")
+  const [contentType, setContentType] = useState(
+    initialData?.contentType ?? "stream",
+  )
   const [notes, setNotes] = useState(initialData?.notes ?? "")
   const [moments, setMoments] = useState(initialData?.moments ?? [""])
   const [tags, setTags] = useState(initialData?.tags ?? [])
@@ -37,6 +41,7 @@ export default function IdeaModal({
     onConfirm({
       vodRef: vodRef.trim(),
       videoTitle: videoTitle.trim(),
+      contentType,
       notes: notes.trim(),
       moments: moments.map((m) => m.trim()).filter(Boolean),
       tags,
@@ -61,6 +66,35 @@ export default function IdeaModal({
         accentColor="#6d28d9"
       />
       <ModalBody>
+        <Field label="Tipo de contenido de origen">
+          <div className="flex gap-2">
+            {CONTENT_TYPES.map((ct) => (
+              <button
+                key={ct.id}
+                onClick={() => setContentType(ct.id)}
+                className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border text-left cursor-pointer transition-all duration-150"
+                style={{
+                  background:
+                    contentType === ct.id
+                      ? "var(--sf-primary-dim)"
+                      : "var(--code-bg)",
+                  borderColor:
+                    contentType === ct.id
+                      ? "var(--sf-primary)"
+                      : "var(--border)",
+                  color:
+                    contentType === ct.id
+                      ? "var(--sf-edit-text)"
+                      : "var(--text)",
+                }}
+              >
+                <span>{ct.icon}</span>
+                <span className="text-[12px] font-medium">{ct.label}</span>
+              </button>
+            ))}
+          </div>
+        </Field>
+
         <Field label="VOD de origen">
           <input
             value={vodRef}
@@ -100,13 +134,13 @@ export default function IdeaModal({
                 <input
                   value={m}
                   onChange={(e) => updateMoment(i, e.target.value)}
-                  placeholder={`ej: Headshot triple en el minuto 42`}
+                  placeholder="ej: Headshot triple en el minuto 42"
                   className={`${inputCls} flex-1`}
                   style={inputStyle}
                 />
                 <button
                   onClick={() => removeMoment(i)}
-                  className="text-[12px] px-2 py-1.5 rounded-lg border cursor-pointer transition-colors"
+                  className="text-[12px] px-2 py-1.5 rounded-lg border cursor-pointer"
                   style={{
                     borderColor: "var(--border)",
                     color: "var(--text)",
@@ -142,7 +176,7 @@ export default function IdeaModal({
           />
         </Field>
 
-        <Field label="Tipo de contenido">
+        <Field label="Tipo de contenido que puede generar">
           <div className="flex gap-2 flex-wrap">
             {TAGS.map((tag) => (
               <button
