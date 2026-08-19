@@ -3,7 +3,7 @@ import NoteInput from "./NoteInput"
 import NoteGrid from "./NoteGrid"
 
 export default function QuickNotes() {
-  const { notes, addNote, removeNote, clearAll } = useQuickNotes()
+  const { notes, addNote, updateNote, removeNote, clearAll } = useQuickNotes()
 
   return (
     <div
@@ -29,7 +29,7 @@ export default function QuickNotes() {
       </div>
 
       <NoteInput onAdd={addNote} />
-      <NoteGrid notes={notes} onRemove={removeNote} />
+      <NoteGrid notes={notes} onRemove={removeNote} onUpdate={updateNote} />
     </div>
   )
 }

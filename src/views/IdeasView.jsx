@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react"
 import ViewHeader from "../components/ViewHeader"
 import EmptyState from "../components/EmptyState"
