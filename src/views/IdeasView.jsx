@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react"
 import ViewHeader from "../components/ViewHeader"
 import EmptyState from "../components/EmptyState"
@@ -42,16 +41,21 @@ export default function IdeasView({
   const { filtered: searched, query, setQuery } = useSearchVods(filtered)
 
   const handleCreate = (data) => {
-    addVod("ideas", data)
+    addVod("ideas", {
+      ...data,
+      title: data.videoTitle || data.title || "Sin título",
+    })
     setShowModal(false)
   }
+
   const handleUpdate = (data) => {
     if (!editingIdea) return
-    updateVod("ideas", editingIdea.id, data)
+    updateVod("ideas", editingIdea.id, {
+      ...data,
+      title: data.videoTitle || data.title || "Sin título",
+    })
     setEditingIdea(null)
   }
-
-  const activeFilter = TAG_FILTERS.find((f) => f.id === tagFilter)
 
   return (
     <>
@@ -152,7 +156,7 @@ export default function IdeasView({
             query
               ? `Sin resultados para "${query}".`
               : tagFilter !== "all" || typeFilter !== "all"
-                ? `Sin ideas con ese filtro.`
+                ? "Sin ideas con ese filtro."
                 : "Sin ideas todavía. Agrega una para empezar."
           }
           onAdd={
@@ -160,6 +164,7 @@ export default function IdeasView({
               ? () => setShowModal(true)
               : null
           }
+          addLabel="Agregar idea"
         />
       ) : (
         <div className="flex flex-col gap-2.5">

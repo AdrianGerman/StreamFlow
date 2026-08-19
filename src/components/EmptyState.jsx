@@ -1,4 +1,4 @@
-export default function EmptyState({ text, onAdd }) {
+export default function EmptyState({ text, onAdd, addLabel = "Agregar" }) {
   return (
     <div
       className="rounded-xl border border-dashed py-12 px-8 text-center"
@@ -11,9 +11,9 @@ export default function EmptyState({ text, onAdd }) {
         <button
           onClick={onAdd}
           className="text-[12px] font-medium px-4 py-2 rounded-lg cursor-pointer border-none text-white transition-opacity hover:opacity-90"
-          style={{ background: "var(--sf-green)" }}
+          style={{ background: "var(--sf-primary)" }}
         >
-          + Agregar VOD
+          + {addLabel}
         </button>
       )}
     </div>
