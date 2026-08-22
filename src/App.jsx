@@ -11,6 +11,8 @@ import TrashView from "./views/TrashView"
 import HistoryView from "./views/HistoryView"
 import DataManager from "./components/DataManager"
 
+import HomeIcon from "./icon/HomeIcon"
+
 function tabCount(tab, buckets) {
   if (!tab.storeKey) return null
   return (buckets[tab.storeKey] ?? []).length
@@ -120,7 +122,7 @@ export default function App() {
             className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm shrink-0 transition-transform duration-150 group-hover:scale-95"
             style={{ background: "var(--sf-primary)" }}
           >
-            🎬
+            <HomeIcon size="16px" />
           </div>
           <span
             className="text-[15px] font-bold tracking-tight"
