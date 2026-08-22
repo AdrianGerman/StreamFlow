@@ -78,9 +78,14 @@ export default function HomeView({ buckets, onNavigate }) {
         />
       </div>
 
-      <div className="mb-4">
-        <DaysSinceUpload data={daysSince} onClick={() => onNavigate("trash")} />
-      </div>
+      {daysSince && (
+        <div className="mb-4">
+          <DaysSinceUpload
+            data={daysSince}
+            onClick={() => onNavigate("trash")}
+          />
+        </div>
+      )}
 
       <div
         className="grid grid-cols-[1fr_300px] gap-4 mb-6"
