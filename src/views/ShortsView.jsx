@@ -1,12 +1,12 @@
 import { useState } from "react"
-import ShortsModal from "../components/ShortsModal"
 import ViewHeader from "../components/ViewHeader"
 import EmptyState from "../components/EmptyState"
 import VodCard from "../components/VodCard"
-import { useSortedVods } from "../hooks/useSortedVods"
-import { useSearchVods } from "../hooks/useSearchVods"
+import ShortsModal from "../components/ShortsModal"
 import SearchBar from "../components/SearchBar"
 import SortControl from "../components/SortControl"
+import { useSortedVods } from "../hooks/useSortedVods"
+import { useSearchVods } from "../hooks/useSearchVods"
 import { useDragDrop } from "../hooks/useDragDrop"
 
 const DESTINATIONS = [{ id: "trash", label: "Para borrar" }]
@@ -19,7 +19,8 @@ export default function ShortsView({
   removeVod,
   reorderVods,
 }) {
-  const [showModal, setShowModal] = useState(false)
+  const [showCreate, setShowCreate] = useState(false)
+  const [editingVod, setEditingVod] = useState(null)
 
   const vods = buckets.shorts ?? []
   const { filtered, query, setQuery } = useSearchVods(vods)
@@ -31,7 +32,13 @@ export default function ShortsView({
 
   const handleAdd = (data) => {
     addVod("shorts", data)
-    setShowModal(false)
+    setShowCreate(false)
+  }
+
+  const handleUpdate = (data) => {
+    if (!editingVod) return
+    updateVod("shorts", editingVod.id, data)
+    setEditingVod(null)
   }
 
   return (
@@ -40,7 +47,7 @@ export default function ShortsView({
         title="Pool de shorts"
         sub="Extrae los mejores momentos y marca cada short a medida que lo subes."
         count={vods.length}
-        onAdd={() => setShowModal(true)}
+        onAdd={() => setShowCreate(true)}
       />
 
       {vods.length > 1 && (
@@ -69,7 +76,7 @@ export default function ShortsView({
               ? `Sin resultados para "${query}".`
               : "Sin videos en el pool. Agrega shorts directamente o mueve un video desde Edición."
           }
-          onAdd={!query ? () => setShowModal(true) : null}
+          onAdd={!query ? () => setShowCreate(true) : null}
           addLabel="Agregar shorts"
         />
       ) : (
@@ -100,16 +107,27 @@ export default function ShortsView({
                 onMove={moveVod}
                 onRemove={removeVod}
                 onUpdate={updateVod}
+                onEdit={(v) => setEditingVod({ ...v })}
               />
             </div>
           ))}
         </div>
       )}
 
-      {showModal && (
+      {showCreate && (
         <ShortsModal
+          mode="create"
           onConfirm={handleAdd}
-          onClose={() => setShowModal(false)}
+          onClose={() => setShowCreate(false)}
+        />
+      )}
+
+      {editingVod && (
+        <ShortsModal
+          mode="edit"
+          initialData={editingVod}
+          onConfirm={handleUpdate}
+          onClose={() => setEditingVod(null)}
         />
       )}
     </>
