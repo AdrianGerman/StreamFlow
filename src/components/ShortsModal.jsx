@@ -4,13 +4,24 @@ import TagBadge from "./TagBadge"
 import CountSelector from "./CountSelector"
 import ModalShell, { ModalHeader, ModalBody, ModalFooter } from "./ModalShell"
 
-export default function ShortsModal({ onConfirm, onClose }) {
-  const [title, setTitle] = useState("")
-  const [shortsCount, setShortsCount] = useState(1)
-  const [shortsPosted, setShortsPosted] = useState(0)
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
-  const [notes, setNotes] = useState("")
-  const [tags, setTags] = useState(["short"])
+export default function ShortsModal({
+  mode = "create",
+  initialData = null,
+  onConfirm,
+  onClose,
+}) {
+  const [title, setTitle] = useState(initialData?.title ?? "")
+  const [shortsCount, setShortsCount] = useState(initialData?.shortsCount ?? 1)
+  const [shortsPosted, setShortsPosted] = useState(
+    initialData?.shortsPosted ?? 0,
+  )
+  const [date, setDate] = useState(
+    initialData?.date ?? new Date().toISOString().slice(0, 10),
+  )
+  const [notes, setNotes] = useState(initialData?.notes ?? "")
+  const [tags, setTags] = useState(initialData?.tags ?? ["short", "tiktok"])
+
+  const isEdit = mode === "edit"
 
   const toggleTag = (id) =>
     setTags((prev) =>
@@ -39,11 +50,17 @@ export default function ShortsModal({ onConfirm, onClose }) {
   const inputCls =
     "w-full text-[13px] rounded-lg border outline-none font-[inherit] transition-colors duration-150"
 
+  const relevantTags = TAGS.filter((t) => t.id !== "video")
+
   return (
     <ModalShell onClose={onClose} width={420}>
       <ModalHeader
-        title="Agregar shorts al pool"
-        sub="Agrega shorts directamente sin pasar por el flujo completo."
+        title={isEdit ? "Editar shorts" : "Agregar shorts al pool"}
+        sub={
+          isEdit
+            ? "Modifica la información de estos shorts."
+            : "Agrega shorts directamente sin pasar por el flujo completo."
+        }
         accentColor="#be185d"
       />
       <ModalBody>
@@ -97,7 +114,7 @@ export default function ShortsModal({ onConfirm, onClose }) {
 
         <Field label="Tipo de contenido">
           <div className="flex gap-2 flex-wrap">
-            {TAGS.map((tag) => (
+            {relevantTags.map((tag) => (
               <button
                 key={tag.id}
                 onClick={() => toggleTag(tag.id)}
@@ -141,7 +158,7 @@ export default function ShortsModal({ onConfirm, onClose }) {
           className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white disabled:opacity-40"
           style={{ background: "var(--sf-primary)" }}
         >
-          Agregar al pool
+          {isEdit ? "Guardar cambios" : "Agregar al pool"}
         </button>
       </ModalFooter>
     </ModalShell>
