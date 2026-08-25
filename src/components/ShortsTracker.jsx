@@ -4,18 +4,26 @@ export default function ShortsTracker({ vod, onUpdate, onComplete }) {
 
   if (total === 0) return null
 
-  const handleMark = () => {
-    const next = posted + 1
-    if (next >= total) {
-      onComplete()
-    } else {
-      onUpdate({ shortsPosted: next })
-    }
-  }
+  const allDone = posted >= total
 
-  const handleUnmark = () => {
-    if (posted <= 0) return
-    onUpdate({ shortsPosted: posted - 1 })
+  const handleToggle = (index) => {
+    const isPosted = index < posted
+
+    if (isPosted) {
+      const next = index
+      if (next <= 0 && total > 0) {
+        onUpdate({ shortsPosted: 0 })
+      } else {
+        onUpdate({ shortsPosted: next })
+      }
+    } else {
+      const next = index + 1
+      if (next >= total) {
+        onComplete()
+      } else {
+        onUpdate({ shortsPosted: next })
+      }
+    }
   }
 
   return (
@@ -29,54 +37,53 @@ export default function ShortsTracker({ vod, onUpdate, onComplete }) {
         </span>
         <span
           className="text-[11px] font-semibold"
-          style={{ color: "var(--sf-green)" }}
+          style={{ color: allDone ? "var(--sf-primary)" : "var(--text)" }}
         >
           {posted}/{total} subidos
         </span>
       </div>
 
-      <div className="flex gap-1.5 mb-2.5 flex-wrap">
-        {Array.from({ length: total }).map((_, i) => (
-          <div
-            key={i}
-            className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200"
-            style={{
-              background: i < posted ? "var(--sf-green)" : "var(--code-bg)",
-              color: i < posted ? "#fff" : "var(--text)",
-              border: `1px solid ${i < posted ? "var(--sf-green)" : "var(--border)"}`,
-            }}
-          >
-            {i < posted ? "✓" : i + 1}
-          </div>
-        ))}
+      <div className="flex gap-1.5 flex-wrap">
+        {Array.from({ length: total }).map((_, i) => {
+          const isDone = i < posted
+          return (
+            <button
+              key={i}
+              onClick={() => handleToggle(i)}
+              title={
+                isDone
+                  ? `Desmarcar short ${i + 1}`
+                  : `Marcar short ${i + 1} como subido`
+              }
+              className="w-7 h-7 mr-1 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 cursor-pointer border-none"
+              style={{
+                background: isDone ? "var(--sf-primary)" : "var(--code-bg)",
+                color: isDone ? "#fff" : "var(--text)",
+                outline: `2px solid ${isDone ? "var(--sf-primary)" : "var(--border)"}`,
+                outlineOffset: "1px",
+                transform: "scale(1)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.15)"
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)"
+              }}
+            >
+              {isDone ? "✓" : i + 1}
+            </button>
+          )
+        })}
       </div>
 
-      <div className="flex gap-1.5">
-        {posted > 0 && (
-          <button
-            onClick={handleUnmark}
-            className="text-[11px] font-medium px-2.5 py-1 rounded-lg border cursor-pointer transition-all duration-150"
-            style={{
-              borderColor: "var(--border)",
-              color: "var(--text)",
-              background: "var(--bg)",
-            }}
-          >
-            ← Desmarcar
-          </button>
-        )}
-        {posted < total && (
-          <button
-            onClick={handleMark}
-            className="text-[11px] font-medium px-3 py-1 rounded-lg border-none cursor-pointer transition-opacity hover:opacity-80 text-white"
-            style={{ background: "var(--sf-green)" }}
-          >
-            {posted === total - 1
-              ? "✓ Marcar último — cerrar ciclo"
-              : `Marcar short ${posted + 1} como subido`}
-          </button>
-        )}
-      </div>
+      {allDone && (
+        <p
+          className="text-[11px] font-medium mt-2"
+          style={{ color: "var(--sf-primary)" }}
+        >
+          ✅ Todos subidos — puedes mover a "Para borrar"
+        </p>
+      )}
     </div>
   )
 }
