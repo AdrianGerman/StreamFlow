@@ -55,8 +55,10 @@ export function createVod({
   notes = "",
   tags = [],
   youtubeUrl = "",
+  playlist = "",
   shortsCount = 0,
   shortsPosted = 0,
+  shortsReady = false,
   vodRef = "",
   moments = [],
 }) {
@@ -70,8 +72,10 @@ export function createVod({
     tags,
     date: date ?? new Date().toISOString().slice(0, 10),
     youtubeUrl,
+    playlist,
     shortsCount,
     shortsPosted,
+    shortsReady,
     vodRef,
     moments,
     phase: 1,
@@ -102,6 +106,9 @@ export function useVodStore() {
         ...extraData,
         ...(toId === "editing" && fromId !== "editing" ? { phase: 1 } : {}),
         ...(toId === "trash" ? { completedAt: new Date().toISOString() } : {}),
+        ...(toId === "shorts" && !extraData.shortsCount
+          ? { shortsReady: true, shortsCount: 0, shortsPosted: 0 }
+          : {}),
       }
       return {
         ...prev,
