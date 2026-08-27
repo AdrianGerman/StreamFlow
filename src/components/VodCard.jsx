@@ -1,7 +1,6 @@
 import TagBadge from "./TagBadge"
 import PhaseBar from "./PhaseBar"
 import ShortsTracker from "./ShortsTracker"
-import ShortsModal from "./ShortsModal"
 import ActionBtn from "./ActionBtn"
 import { CONTENT_TYPE_MAP } from "../constants/contentTypes"
 import { formatDate } from "../utils/date"
@@ -21,13 +20,10 @@ export default function VodCard({
   const {
     hovered,
     confirming,
-    shortsTarget,
     handleMouseEnter,
     handleMouseLeave,
     handleRemove,
     handleMove,
-    handleShortsConfirm,
-    handleShortsCancel,
   } = useVodCardActions({ vod, bucketId, onMove, onRemove })
 
   const isEditing = bucketId === "editing"
@@ -36,146 +32,136 @@ export default function VodCard({
   const ct = CONTENT_TYPE_MAP[vod.contentType ?? "stream"]
 
   return (
-    <>
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="rounded-xl transition-all duration-200"
+      style={{
+        background: "var(--bg)",
+        border: `1px solid ${hovered ? "var(--border-strong)" : "var(--border)"}`,
+        boxShadow: hovered ? "var(--shadow)" : "var(--shadow-sm)",
+      }}
+    >
       <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className="rounded-xl transition-all duration-200"
+        className="flex items-center justify-between px-4 py-2 rounded-t-xl"
         style={{
-          background: "var(--bg)",
-          border: `1px solid ${hovered ? "var(--border-strong)" : "var(--border)"}`,
-          boxShadow: hovered ? "var(--shadow)" : "var(--shadow-sm)",
+          background: "var(--code-bg)",
+          borderBottom: "1px solid var(--border)",
         }}
       >
-        <div
-          className="flex items-center justify-between px-4 py-2 rounded-t-xl"
-          style={{
-            background: "var(--code-bg)",
-            borderBottom: "1px solid var(--border)",
-          }}
+        <span
+          className="text-[10px] font-semibold uppercase tracking-widest"
+          style={{ color: "var(--text)" }}
         >
-          <span
-            className="text-[10px] font-semibold uppercase tracking-widest"
-            style={{ color: "var(--text)" }}
-          >
-            {ct?.icon} {ct?.label}
+          {ct?.icon} {ct?.label}
+        </span>
+        {vod.date && (
+          <span className="text-[11px]" style={{ color: "var(--text)" }}>
+            {formatDate(vod.date)}
           </span>
-          {vod.date && (
+        )}
+      </div>
+
+      <div className="px-4 py-3">
+        <p
+          className="text-[11px] leading-snug mb-0.5"
+          style={{ color: "var(--text)" }}
+        >
+          {vod.title}
+        </p>
+
+        {vod.videoTitle && (
+          <p
+            className="text-[15px] font-semibold leading-snug"
+            style={{ color: "var(--text-h)" }}
+          >
+            {vod.videoTitle}
+          </p>
+        )}
+
+        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+          {vod.duration && (
             <span className="text-[11px]" style={{ color: "var(--text)" }}>
-              {formatDate(vod.date)}
+              ⏱ {vod.duration}
+            </span>
+          )}
+          {vod.playlist && (
+            <span className="text-[11px]" style={{ color: "var(--text)" }}>
+              📋 {vod.playlist}
             </span>
           )}
         </div>
 
-        <div className="px-4 py-3">
-          <p
-            className="text-[11px] leading-snug mb-0.5"
-            style={{ color: "var(--text)" }}
+        {vod.youtubeUrl && (
+          <a
+            href={vod.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-[11px] font-medium mt-1.5 transition-opacity hover:opacity-70"
+            style={{ color: "var(--sf-primary)" }}
+            onClick={(e) => e.stopPropagation()}
           >
-            {vod.title}
+            ▶ Ver VOD en YouTube
+          </a>
+        )}
+
+        {vod.notes && (
+          <p
+            className="text-[12px] leading-relaxed mt-2 px-3 py-2 rounded-lg"
+            style={{ color: "var(--text)", background: "var(--code-bg)" }}
+          >
+            {vod.notes}
           </p>
+        )}
 
-          {vod.videoTitle && (
-            <p
-              className="text-[15px] font-semibold leading-snug"
-              style={{ color: "var(--text-h)" }}
-            >
-              {vod.videoTitle}
-            </p>
-          )}
-
-          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-            {vod.duration && (
-              <span className="text-[11px]" style={{ color: "var(--text)" }}>
-                ⏱ {vod.duration}
-              </span>
-            )}
-            {vod.playlist && (
-              <span className="text-[11px]" style={{ color: "var(--text)" }}>
-                📋 {vod.playlist}
-              </span>
-            )}
+        {vod.tags?.length > 0 && (
+          <div className="flex gap-1.5 mt-2 flex-wrap">
+            {vod.tags.map((t) => (
+              <TagBadge key={t} tagId={t} />
+            ))}
           </div>
+        )}
 
-          {vod.youtubeUrl && (
-            <a
-              href={vod.youtubeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[11px] font-medium mt-1.5 transition-opacity hover:opacity-70"
-              style={{ color: "var(--sf-primary)" }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              ▶ Ver VOD en YouTube
-            </a>
-          )}
+        {isEditing && (
+          <PhaseBar
+            phase={vod.phase}
+            onAdvance={() => onAdvance?.(vod.id, vod.phase)}
+            onRegress={() => onRegress?.(vod.id, vod.phase)}
+          />
+        )}
 
-          {vod.notes && (
-            <p
-              className="text-[12px] leading-relaxed mt-2 px-3 py-2 rounded-lg"
-              style={{ color: "var(--text)", background: "var(--code-bg)" }}
-            >
-              {vod.notes}
-            </p>
-          )}
+        {isShorts && onUpdate && (
+          <ShortsTracker
+            vod={vod}
+            onUpdate={(changes) => onUpdate(bucketId, vod.id, changes)}
+            onComplete={() => onMove(vod.id, bucketId, "trash")}
+          />
+        )}
 
-          {vod.tags?.length > 0 && (
-            <div className="flex gap-1.5 mt-2 flex-wrap">
-              {vod.tags.map((t) => (
-                <TagBadge key={t} tagId={t} />
-              ))}
-            </div>
-          )}
+        {hovered && !isTrash && (
+          <VodCardActions
+            destinations={destinations}
+            onMove={handleMove}
+            onEdit={onEdit ? () => onEdit(vod) : null}
+            onRemove={handleRemove}
+            confirming={confirming}
+          />
+        )}
 
-          {isEditing && (
-            <PhaseBar
-              phase={vod.phase}
-              onAdvance={() => onAdvance?.(vod.id, vod.phase)}
-              onRegress={() => onRegress?.(vod.id, vod.phase)}
-            />
-          )}
-
-          {isShorts && onUpdate && (
-            <ShortsTracker
-              vod={vod}
-              onUpdate={(changes) => onUpdate(bucketId, vod.id, changes)}
-              onComplete={() => onMove(vod.id, bucketId, "trash")}
-            />
-          )}
-
-          {hovered && !isTrash && (
-            <VodCardActions
-              destinations={destinations}
-              onMove={handleMove}
-              onEdit={onEdit ? () => onEdit(vod) : null}
-              onRemove={handleRemove}
-              confirming={confirming}
-            />
-          )}
-
-          {hovered && isTrash && (
-            <div
-              className="mt-2.5 pt-2.5"
-              style={{ borderTop: "1px solid var(--border)" }}
-            >
-              <ActionBtn onClick={handleRemove} danger={confirming} fullWidth>
-                {confirming
-                  ? "¿Confirmar eliminación?"
-                  : "Eliminar de StreamFlow"}
-              </ActionBtn>
-            </div>
-          )}
-        </div>
+        {hovered && isTrash && (
+          <div
+            className="mt-2.5 pt-2.5"
+            style={{ borderTop: "1px solid var(--border)" }}
+          >
+            <ActionBtn onClick={handleRemove} danger={confirming} fullWidth>
+              {confirming
+                ? "¿Confirmar eliminación?"
+                : "Eliminar de StreamFlow"}
+            </ActionBtn>
+          </div>
+        )}
       </div>
-
-      {shortsTarget && (
-        <ShortsModal
-          vod={vod}
-          onConfirm={handleShortsConfirm}
-          onClose={handleShortsCancel}
-        />
-      )}
-    </>
+    </div>
   )
 }
 
