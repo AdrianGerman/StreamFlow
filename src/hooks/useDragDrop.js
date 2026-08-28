@@ -38,9 +38,5 @@ export function useDragDrop(onReorder) {
     setOverId(null)
   }, [])
 
-  const onDragLeave = useCallback(() => {
-    setOverId(null)
-  }, [])
-
-  return { overId, onDragStart, onDragOver, onDrop, onDragEnd, onDragLeave }
+  return { overId, onDragStart, onDragOver, onDrop, onDragEnd }
 }

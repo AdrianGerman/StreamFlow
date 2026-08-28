@@ -35,8 +35,9 @@ export default function BucketView({
 
   const canDrag = !!onReorder && !query && sortId === "date-desc"
 
-  const { overId, onDragStart, onDragOver, onDrop, onDragEnd, onDragLeave } =
-    useDragDrop((fromId, toId) => onReorder(bucketId, fromId, toId))
+  const { overId, onDragStart, onDragOver, onDrop, onDragEnd } = useDragDrop(
+    (fromId, toId) => onReorder(bucketId, fromId, toId),
+  )
 
   const handleCreate = (data) => {
     onAdd(data)
@@ -96,7 +97,6 @@ export default function BucketView({
               onDragOver={canDrag ? onDragOver(vod.id) : undefined}
               onDrop={canDrag ? onDrop(vod.id) : undefined}
               onDragEnd={canDrag ? onDragEnd : undefined}
-              onDragLeave={canDrag ? onDragLeave : undefined}
               style={{
                 transition: "transform 0.15s, opacity 0.15s",
                 transform: overId === vod.id ? "translateY(-3px)" : "none",
