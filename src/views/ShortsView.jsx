@@ -27,8 +27,9 @@ export default function ShortsView({
   const { sorted, sortId, setSortId } = useSortedVods(filtered)
 
   const canDrag = !!reorderVods && !query && sortId === "date-desc"
-  const { overId, onDragStart, onDragOver, onDrop, onDragEnd, onDragLeave } =
-    useDragDrop((fromId, toId) => reorderVods("shorts", fromId, toId))
+  const { overId, onDragStart, onDragOver, onDrop, onDragEnd } = useDragDrop(
+    (fromId, toId) => reorderVods("shorts", fromId, toId),
+  )
 
   const handleAdd = (data) => {
     addVod("shorts", data)
@@ -89,7 +90,6 @@ export default function ShortsView({
               onDragOver={canDrag ? onDragOver(vod.id) : undefined}
               onDrop={canDrag ? onDrop(vod.id) : undefined}
               onDragEnd={canDrag ? onDragEnd : undefined}
-              onDragLeave={canDrag ? onDragLeave : undefined}
               style={{
                 transition: "transform 0.15s",
                 transform: overId === vod.id ? "translateY(-3px)" : "none",
