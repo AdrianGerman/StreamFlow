@@ -2,7 +2,7 @@ import { useState } from "react"
 import ViewHeader from "../components/ViewHeader"
 import EmptyState from "../components/EmptyState"
 import VodCard from "../components/VodCard"
-import ShortsModal from "../components/ShortsModal"
+import ShortModal from "../components/ShortModal"
 import SearchBar from "../components/SearchBar"
 import SortControl from "../components/SortControl"
 import { useSortedVods } from "../hooks/useSortedVods"
@@ -115,7 +115,7 @@ export default function ShortsView({
       )}
 
       {showCreate && (
-        <ShortsModal
+        <ShortModal
           mode="create"
           onConfirm={handleAdd}
           onClose={() => setShowCreate(false)}
@@ -123,7 +123,7 @@ export default function ShortsView({
       )}
 
       {editingVod && (
-        <ShortsModal
+        <ShortModal
           mode="edit"
           initialData={editingVod}
           onConfirm={handleUpdate}
