@@ -17,14 +17,21 @@ export default function VodModal({
   const [contentType, setContentType] = useState(
     initialData?.contentType ?? defaultContentType,
   )
-  const [duration, setDuration] = useState(initialData?.duration ?? "")
-  const [date, setDate] = useState(
-    initialData?.date ?? new Date().toISOString().slice(0, 10),
-  )
-  const [notes, setNotes] = useState(initialData?.notes ?? "")
   const [tags, setTags] = useState(initialData?.tags ?? [])
+
+  const hasDetails = !!(
+    initialData?.duration ||
+    initialData?.date ||
+    initialData?.youtubeUrl ||
+    initialData?.playlist ||
+    initialData?.notes
+  )
+  const [showDetails, setShowDetails] = useState(hasDetails)
+  const [duration, setDuration] = useState(initialData?.duration ?? "")
+  const [date, setDate] = useState(initialData?.date ?? "")
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl ?? "")
   const [playlist, setPlaylist] = useState(initialData?.playlist ?? "")
+  const [notes, setNotes] = useState(initialData?.notes ?? "")
 
   const isEdit = mode === "edit"
 
@@ -39,14 +46,23 @@ export default function VodModal({
       title: title.trim(),
       videoTitle,
       contentType,
+      tags,
       duration,
       date,
-      notes,
-      tags,
       youtubeUrl,
       playlist,
+      notes,
     })
   }
+
+  const inputStyle = {
+    padding: "7px 10px",
+    borderColor: "var(--border)",
+    background: "var(--code-bg)",
+    color: "var(--text-h)",
+  }
+  const inputCls =
+    "w-full text-[13px] rounded-lg border outline-none font-[inherit] transition-colors duration-150"
 
   return (
     <ModalShell onClose={onClose}>
@@ -91,7 +107,9 @@ export default function VodModal({
             autoFocus
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            onKeyDown={(e) =>
+              e.key === "Enter" && !showDetails && handleSubmit()
+            }
             placeholder="ej: 2024-06-22_ranked_session"
             className={inputCls}
             style={inputStyle}
@@ -104,58 +122,6 @@ export default function VodModal({
             onChange={(e) => setVideoTitle(e.target.value)}
             placeholder="ej: WIN CON SKIN DEL PASE DE BATALLA"
             className={inputCls}
-            style={inputStyle}
-          />
-        </Field>
-
-        <div className="flex gap-2.5">
-          <Field label="Duración" className="flex-1">
-            <input
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              placeholder="ej: 2h 30m"
-              className={inputCls}
-              style={inputStyle}
-            />
-          </Field>
-          <Field label="Fecha" className="flex-1">
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className={inputCls}
-              style={inputStyle}
-            />
-          </Field>
-        </div>
-
-        <Field label="URL del VOD en YouTube">
-          <input
-            value={youtubeUrl}
-            onChange={(e) => setYoutubeUrl(e.target.value)}
-            placeholder="https://youtube.com/watch?v=..."
-            className={inputCls}
-            style={inputStyle}
-          />
-        </Field>
-
-        <Field label="Playlist de YouTube">
-          <input
-            value={playlist}
-            onChange={(e) => setPlaylist(e.target.value)}
-            placeholder="ej: Temporada 3 — Ranked"
-            className={inputCls}
-            style={inputStyle}
-          />
-        </Field>
-
-        <Field label="Notas e ideas">
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Momentos destacados, ideas para el video..."
-            rows={3}
-            className={`${inputCls} resize-y`}
             style={inputStyle}
           />
         </Field>
@@ -186,6 +152,85 @@ export default function VodModal({
             ))}
           </div>
         </Field>
+
+        <button
+          onClick={() => setShowDetails((v) => !v)}
+          className="flex items-center gap-1.5 text-[12px] font-medium cursor-pointer border-none bg-transparent transition-opacity hover:opacity-70 mb-1"
+          style={{ color: "var(--sf-primary)" }}
+        >
+          <span
+            style={{
+              display: "inline-block",
+              transition: "transform 0.2s",
+              transform: showDetails ? "rotate(90deg)" : "rotate(0deg)",
+            }}
+          >
+            ▶
+          </span>
+          {showDetails ? "Ocultar detalles" : "+ Más detalles"}
+        </button>
+
+        {showDetails && (
+          <div
+            className="flex flex-col gap-0 rounded-xl p-3 mt-1"
+            style={{
+              background: "var(--code-bg)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <div className="flex gap-2.5">
+              <Field label="Duración" className="flex-1">
+                <input
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  placeholder="ej: 2h 30m"
+                  className={inputCls}
+                  style={inputStyle}
+                />
+              </Field>
+              <Field label="Fecha" className="flex-1">
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className={inputCls}
+                  style={inputStyle}
+                />
+              </Field>
+            </div>
+
+            <Field label="URL del VOD en YouTube">
+              <input
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="https://youtube.com/watch?v=..."
+                className={inputCls}
+                style={inputStyle}
+              />
+            </Field>
+
+            <Field label="Playlist de YouTube">
+              <input
+                value={playlist}
+                onChange={(e) => setPlaylist(e.target.value)}
+                placeholder="ej: Temporada 3 — Ranked"
+                className={inputCls}
+                style={inputStyle}
+              />
+            </Field>
+
+            <Field label="Notas e ideas" className="mb-0">
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Momentos destacados, ideas para el video..."
+                rows={3}
+                className={`${inputCls} resize-y`}
+                style={inputStyle}
+              />
+            </Field>
+          </div>
+        )}
       </ModalBody>
 
       <ModalFooter>
@@ -225,13 +270,4 @@ function Field({ label, children, className = "" }) {
       {children}
     </div>
   )
-}
-
-const inputCls =
-  "w-full text-[13px] rounded-lg border outline-none font-[inherit] transition-colors duration-150"
-const inputStyle = {
-  padding: "7px 10px",
-  borderColor: "var(--border)",
-  background: "var(--code-bg)",
-  color: "var(--text-h)",
 }
