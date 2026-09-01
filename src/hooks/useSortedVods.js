@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react"
 
+const STORAGE_KEY = "streamflow:sort"
+
 export const SORT_OPTIONS = [
   { id: "date-desc", label: "Más recientes primero" },
   { id: "date-asc", label: "Más antiguos primero" },
@@ -8,6 +10,27 @@ export const SORT_OPTIONS = [
 ]
 
 const DEFAULT_SORT = "date-desc"
+
+function loadSort(bucketId) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    const saved = raw ? JSON.parse(raw) : {}
+    return saved[bucketId] ?? DEFAULT_SORT
+  } catch {
+    return DEFAULT_SORT
+  }
+}
+
+function saveSort(bucketId, sortId) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    const saved = raw ? JSON.parse(raw) : {}
+    saved[bucketId] = sortId
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
+  } catch {
+    /* empty */
+  }
+}
 
 function sortVods(vods, sortId) {
   const list = [...vods]
@@ -25,8 +48,15 @@ function sortVods(vods, sortId) {
   }
 }
 
-export function useSortedVods(vods = []) {
-  const [sortId, setSortId] = useState(DEFAULT_SORT)
+export function useSortedVods(vods = [], bucketId = "default") {
+  const [sortId, setSortIdState] = useState(() => loadSort(bucketId))
+
+  const setSortId = (id) => {
+    setSortIdState(id)
+    saveSort(bucketId, id)
+  }
+
   const sorted = useMemo(() => sortVods(vods, sortId), [vods, sortId])
+
   return { sorted, sortId, setSortId }
 }
