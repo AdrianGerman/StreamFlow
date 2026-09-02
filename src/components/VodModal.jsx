@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { TAGS } from "../constants/tags"
 import { CONTENT_TYPES } from "../constants/contentTypes"
+import { SOURCE_TYPES, inferSourceType } from "../constants/sourceTypes"
 import TagBadge from "./TagBadge"
 import ModalShell, { ModalHeader, ModalBody, ModalFooter } from "./ModalShell"
 
@@ -13,6 +14,10 @@ export default function VodModal({
   onClose,
 }) {
   const [title, setTitle] = useState(initialData?.title ?? "")
+  const [folderName, setFolderName] = useState(initialData?.folderName ?? "")
+  const [sourceType, setSourceType] = useState(() =>
+    inferSourceType(initialData),
+  )
   const [videoTitle, setVideoTitle] = useState(initialData?.videoTitle ?? "")
   const [contentType, setContentType] = useState(
     initialData?.contentType ?? defaultContentType,
@@ -34,6 +39,12 @@ export default function VodModal({
   const [notes, setNotes] = useState(initialData?.notes ?? "")
 
   const isEdit = mode === "edit"
+  const showFile = sourceType === "file" || sourceType === "both"
+  const showFolder = sourceType === "folder" || sourceType === "both"
+
+  const canSubmit =
+    (showFile ? !!title.trim() : true) &&
+    (showFolder ? !!folderName.trim() : true)
 
   const toggleTag = (id) =>
     setTags((prev) =>
@@ -41,9 +52,11 @@ export default function VodModal({
     )
 
   const handleSubmit = () => {
-    if (!title.trim()) return
+    if (!canSubmit) return
     onConfirm({
-      title: title.trim(),
+      title: showFile ? title.trim() : "",
+      folderName: showFolder ? folderName.trim() : "",
+      sourceType,
       videoTitle,
       contentType,
       tags,
@@ -102,19 +115,60 @@ export default function VodModal({
           </div>
         </Field>
 
-        <Field label="Nombre del archivo *">
-          <input
-            autoFocus
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" && !showDetails && handleSubmit()
-            }
-            placeholder="ej: 2024-06-22_ranked_session"
-            className={inputCls}
-            style={inputStyle}
-          />
+        <Field label="Tipo de origen">
+          <div className="flex gap-2">
+            {SOURCE_TYPES.map((st) => (
+              <button
+                key={st.id}
+                onClick={() => setSourceType(st.id)}
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border cursor-pointer transition-all duration-150"
+                style={{
+                  background:
+                    sourceType === st.id
+                      ? "var(--sf-primary-dim)"
+                      : "var(--code-bg)",
+                  borderColor:
+                    sourceType === st.id
+                      ? "var(--sf-primary)"
+                      : "var(--border)",
+                  color:
+                    sourceType === st.id
+                      ? "var(--sf-edit-text)"
+                      : "var(--text)",
+                }}
+              >
+                <span>{st.icon}</span>
+                <span className="text-[12px] font-medium">{st.label}</span>
+              </button>
+            ))}
+          </div>
         </Field>
+
+        {showFile && (
+          <Field label="Nombre del archivo *">
+            <input
+              autoFocus={showFile}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="ej: 2024-06-22_ranked_session"
+              className={inputCls}
+              style={inputStyle}
+            />
+          </Field>
+        )}
+
+        {showFolder && (
+          <Field label="Nombre de la carpeta *">
+            <input
+              autoFocus={!showFile}
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+              placeholder="ej: 19 de junio — Ranked"
+              className={inputCls}
+              style={inputStyle}
+            />
+          </Field>
+        )}
 
         <Field label="Título del video">
           <input
@@ -198,7 +252,6 @@ export default function VodModal({
                 />
               </Field>
             </div>
-
             <Field label="URL del VOD en YouTube">
               <input
                 value={youtubeUrl}
@@ -208,7 +261,6 @@ export default function VodModal({
                 style={inputStyle}
               />
             </Field>
-
             <Field label="Playlist de YouTube">
               <input
                 value={playlist}
@@ -218,7 +270,6 @@ export default function VodModal({
                 style={inputStyle}
               />
             </Field>
-
             <Field label="Notas e ideas" className="mb-0">
               <textarea
                 value={notes}
@@ -236,7 +287,7 @@ export default function VodModal({
       <ModalFooter>
         <button
           onClick={onClose}
-          className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border transition-colors duration-150"
+          className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border"
           style={{
             borderColor: "var(--border)",
             color: "var(--text)",
@@ -247,8 +298,8 @@ export default function VodModal({
         </button>
         <button
           onClick={handleSubmit}
-          disabled={!title.trim()}
-          className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white transition-opacity disabled:opacity-40"
+          disabled={!canSubmit}
+          className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white disabled:opacity-40"
           style={{ background: "var(--sf-primary)" }}
         >
           {isEdit ? "Guardar cambios" : "Agregar"}
