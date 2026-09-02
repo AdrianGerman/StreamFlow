@@ -31,9 +31,12 @@ export default function BucketView({
   const [editingVod, setEditingVod] = useState(null)
 
   const { filtered, query, setQuery } = useSearchVods(vods)
-  const { sorted, sortId, setSortId } = useSortedVods(filtered, bucketId)
+  const { sorted, sortId, setSortId, canReorder } = useSortedVods(
+    filtered,
+    bucketId,
+  )
 
-  const canDrag = !!onReorder && !query && sortId === "date-desc"
+  const canDrag = !!onReorder && !query && canReorder
 
   const { overId, onDragStart, onDragOver, onDrop, onDragEnd } = useDragDrop(
     (fromId, toId) => onReorder(bucketId, fromId, toId),

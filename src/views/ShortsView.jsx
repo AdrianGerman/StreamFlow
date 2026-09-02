@@ -24,9 +24,12 @@ export default function ShortsView({
 
   const vods = buckets.shorts ?? []
   const { filtered, query, setQuery } = useSearchVods(vods)
-  const { sorted, sortId, setSortId } = useSortedVods(filtered, "shorts")
+  const { sorted, sortId, setSortId, canReorder } = useSortedVods(
+    filtered,
+    "shorts",
+  )
 
-  const canDrag = !!reorderVods && !query && sortId === "date-desc"
+  const canDrag = !!reorderVods && !query && canReorder
   const { overId, onDragStart, onDragOver, onDrop, onDragEnd } = useDragDrop(
     (fromId, toId) => reorderVods("shorts", fromId, toId),
   )
