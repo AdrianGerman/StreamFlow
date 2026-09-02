@@ -3,13 +3,14 @@ import { useState, useMemo } from "react"
 const STORAGE_KEY = "streamflow:sort"
 
 export const SORT_OPTIONS = [
+  { id: "manual", label: "Orden manual" },
   { id: "date-desc", label: "Más recientes primero" },
   { id: "date-asc", label: "Más antiguos primero" },
   { id: "title-asc", label: "Título A → Z" },
   { id: "title-desc", label: "Título Z → A" },
 ]
 
-const DEFAULT_SORT = "date-desc"
+const DEFAULT_SORT = "manual"
 
 function loadSort(bucketId) {
   try {
@@ -33,6 +34,7 @@ function saveSort(bucketId, sortId) {
 }
 
 function sortVods(vods, sortId) {
+  if (sortId === "manual") return vods
   const list = [...vods]
   switch (sortId) {
     case "date-desc":
@@ -44,7 +46,7 @@ function sortVods(vods, sortId) {
     case "title-desc":
       return list.sort((a, b) => b.title.localeCompare(a.title, "es"))
     default:
-      return list
+      return vods
   }
 }
 
@@ -58,5 +60,7 @@ export function useSortedVods(vods = [], bucketId = "default") {
 
   const sorted = useMemo(() => sortVods(vods, sortId), [vods, sortId])
 
-  return { sorted, sortId, setSortId }
+  const canReorder = sortId === "manual"
+
+  return { sorted, sortId, setSortId, canReorder }
 }
