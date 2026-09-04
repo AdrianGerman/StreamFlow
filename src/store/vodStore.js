@@ -35,6 +35,8 @@ function generateId() {
  *
  * Campos:
  *   title        string   — nombre del archivo / stream (ej: "2024-06-22")
+ *   folderName   string   — nombre de la carpeta organizada (opcional)
+ *   sourceType   string   — "file" | "folder" | "both"
  *   videoTitle   string   — título creativo del video a publicar
  *   contentType  string   — "stream" | "recording"
  *   duration     string   — duración legible (ej: "2h 30m")
@@ -48,6 +50,8 @@ function generateId() {
  */
 export function createVod({
   title = "",
+  folderName = "",
+  sourceType = "file",
   videoTitle = "",
   contentType = "stream",
   duration = "",
@@ -65,6 +69,8 @@ export function createVod({
   return {
     id: generateId(),
     title,
+    folderName,
+    sourceType,
     videoTitle,
     contentType,
     duration,

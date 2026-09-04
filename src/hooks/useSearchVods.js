@@ -11,7 +11,9 @@ function matchesSearch(vod, query) {
   if (!query.trim()) return true
   const q = normalize(query)
   return (
-    normalize(vod.title).includes(q) ||
+    normalize(vod.title ?? "").includes(q) ||
+    normalize(vod.folderName ?? "").includes(q) ||
+    normalize(vod.videoTitle ?? "").includes(q) ||
     normalize(vod.notes ?? "").includes(q) ||
     normalize(vod.duration ?? "").includes(q)
   )
