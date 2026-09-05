@@ -142,7 +142,9 @@ export default function HomeView({ buckets, onNavigate }) {
                   className="text-[13px] font-medium mb-3 leading-snug"
                   style={{ color: "var(--text-h)" }}
                 >
-                  {activeEdit.videoTitle || activeEdit.title}
+                  {activeEdit.videoTitle ||
+                    activeEdit.title ||
+                    activeEdit.folderName}
                 </p>
                 <div className="flex flex-col gap-2">
                   {[1, 2, 3, 4].map((n) => (

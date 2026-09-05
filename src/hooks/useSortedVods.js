@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react"
+import { getVodSourceName } from "../constants/sourceTypes"
 
 const STORAGE_KEY = "streamflow:sort"
 
@@ -42,9 +43,13 @@ function sortVods(vods, sortId) {
     case "date-asc":
       return list.sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""))
     case "title-asc":
-      return list.sort((a, b) => a.title.localeCompare(b.title, "es"))
+      return list.sort((a, b) =>
+        getVodSourceName(a).localeCompare(getVodSourceName(b), "es"),
+      )
     case "title-desc":
-      return list.sort((a, b) => b.title.localeCompare(a.title, "es"))
+      return list.sort((a, b) =>
+        getVodSourceName(b).localeCompare(getVodSourceName(a), "es"),
+      )
     default:
       return vods
   }

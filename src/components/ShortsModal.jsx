@@ -1,6 +1,7 @@
 import { useState } from "react"
 import CountSelector from "./CountSelector"
 import ModalShell, { ModalHeader, ModalBody, ModalFooter } from "./ModalShell"
+import { getVodSourceName } from "../constants/sourceTypes"
 
 export default function ShortsModal({ vod, onConfirm, onClose }) {
   const [count, setCount] = useState(1)
@@ -9,7 +10,7 @@ export default function ShortsModal({ vod, onConfirm, onClose }) {
     <ModalShell onClose={onClose} width={380}>
       <ModalHeader
         title="¿Cuántos shorts salieron?"
-        sub={vod.videoTitle || vod.title}
+        sub={vod.videoTitle || getVodSourceName(vod)}
         accentColor="#5b21b6"
       />
       <ModalBody>

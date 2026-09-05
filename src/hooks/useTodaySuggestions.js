@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { TOTAL_PHASES } from "../constants/phases"
+import { getVodSourceName } from "../constants/sourceTypes"
 
 export function useTodaySuggestions(buckets) {
   return useMemo(() => {
@@ -16,7 +17,7 @@ export function useTodaySuggestions(buckets) {
       suggestions.push({
         id: "editing",
         icon: "✂️",
-        title: `Continuar edición — ${activeEdit.title}`,
+        title: `Continuar edición — ${getVodSourceName(activeEdit)}`,
         sub: isLastPhase
           ? `Fase ${activeEdit.phase}: Intro y outro · ¡Último paso!`
           : `Fase ${activeEdit.phase} de ${TOTAL_PHASES}: ${phaseLabel(activeEdit.phase)}`,
@@ -35,8 +36,8 @@ export function useTodaySuggestions(buckets) {
         title: `Extraer shorts de ${shorts.length} video${shorts.length > 1 ? "s" : ""}`,
         sub:
           shorts.length > 1
-            ? `El más reciente: ${shorts[0]?.title}`
-            : shorts[0]?.title,
+            ? `El más reciente: ${getVodSourceName(shorts[0])}`
+            : getVodSourceName(shorts[0]),
         tag: "Shorts pendientes",
         tagBg: "#fad6e4",
         tagColor: "#5c0d2a",
@@ -50,7 +51,7 @@ export function useTodaySuggestions(buckets) {
         id: "inbox",
         icon: "📥",
         title: `Clasificar ${inbox.length} VOD${inbox.length > 1 ? "s" : ""} sin revisar`,
-        sub: `El más reciente: ${inbox[0]?.title ?? ""}`,
+        sub: `El más reciente: ${getVodSourceName(inbox[0])}`,
         tag: inbox.length >= 5 ? "¡Muchos pendientes!" : "Pendiente",
         tagBg: inbox.length >= 5 ? "#fae0d4" : "#daeafa",
         tagColor: inbox.length >= 5 ? "#5c2010" : "#0d3a5c",
