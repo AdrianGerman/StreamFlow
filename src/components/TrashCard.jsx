@@ -1,6 +1,7 @@
 import { useState } from "react"
 import ActionBtn from "./ActionBtn"
 import TagBadge from "./TagBadge"
+import SourceOrigin from "./SourceOrigin"
 import { CONTENT_TYPE_MAP } from "../constants/contentTypes"
 import { formatDate } from "../utils/date"
 
@@ -56,12 +57,7 @@ export default function TrashCard({ vod, onRemove }) {
       </div>
 
       <div className="px-4 py-3">
-        <p
-          className="text-[11px] leading-snug mb-0.5"
-          style={{ color: "var(--text)" }}
-        >
-          {vod.title}
-        </p>
+        <SourceOrigin vod={vod} />
 
         {vod.videoTitle && (
           <p

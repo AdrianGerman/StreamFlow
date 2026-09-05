@@ -2,6 +2,7 @@ import TagBadge from "./TagBadge"
 import PhaseBar from "./PhaseBar"
 import ShortsTracker from "./ShortsTracker"
 import ActionBtn from "./ActionBtn"
+import SourceOrigin from "./SourceOrigin"
 import { CONTENT_TYPE_MAP } from "../constants/contentTypes"
 import { formatDate } from "../utils/date"
 import { useVodCardActions } from "../hooks/useVodCardActions"
@@ -63,12 +64,7 @@ export default function VodCard({
       </div>
 
       <div className="px-4 py-3">
-        <p
-          className="text-[11px] leading-snug mb-0.5"
-          style={{ color: "var(--text)" }}
-        >
-          {vod.title}
-        </p>
+        <SourceOrigin vod={vod} />
 
         {vod.videoTitle && (
           <p
