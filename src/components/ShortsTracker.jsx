@@ -22,7 +22,7 @@ export default function ShortsTracker({ vod, onUpdate, onComplete }) {
     } else {
       const next = index + 1
       if (next >= total) {
-        onComplete()
+        onComplete({ shortsPosted: next })
       } else {
         onUpdate({ shortsPosted: next })
       }
