@@ -3,10 +3,28 @@ import { STORE_KEYS } from "../constants/nav"
 
 const STORAGE_KEY = "streamflow:vods"
 
+function repairIncompleteLastShort(state) {
+  const trash = state.trash
+  if (!Array.isArray(trash)) return state
+  let changed = false
+  const nextTrash = trash.map((v) => {
+    const count = v.shortsCount ?? 0
+    const posted = v.shortsPosted ?? 0
+    if (count > 0 && posted === count - 1) {
+      changed = true
+      return { ...v, shortsPosted: count }
+    }
+    return v
+  })
+  return changed ? { ...state, trash: nextTrash } : state
+}
+
 function loadFromStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : null
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    return parsed ? repairIncompleteLastShort(parsed) : null
   } catch {
     return null
   }
