@@ -51,7 +51,7 @@ export default function TrashCard({ vod, onRemove }) {
             className="text-[11px]"
             style={{ color: "var(--sf-trash-text)" }}
           >
-            {formatDate(vod.completedAt)}
+            {new Date(vod.completedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short" })}
           </span>
         )}
       </div>
