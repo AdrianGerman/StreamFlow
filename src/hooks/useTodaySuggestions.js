@@ -11,6 +11,16 @@ export function useTodaySuggestions(buckets) {
     const shorts = buckets.shorts ?? []
     const trash = buckets.trash ?? []
 
+    const shortsReady = shorts.filter(
+      (v) => v.shortsReady && (v.shortsCount ?? 0) === 0,
+    )
+    const shortsProgress = shorts.filter(
+      (v) => (v.shortsCount ?? 0) > 0 && (v.shortsPosted ?? 0) < v.shortsCount,
+    )
+    const shortsDone = shorts.filter(
+      (v) => (v.shortsCount ?? 0) > 0 && (v.shortsPosted ?? 0) >= v.shortsCount,
+    )
+
     const activeEdit = editing[0] ?? null
     if (activeEdit) {
       const isLastPhase = activeEdit.phase === TOTAL_PHASES
@@ -22,25 +32,64 @@ export function useTodaySuggestions(buckets) {
           ? `Fase ${activeEdit.phase}: Intro y outro · ¡Último paso!`
           : `Fase ${activeEdit.phase} de ${TOTAL_PHASES}: ${phaseLabel(activeEdit.phase)}`,
         tag: isLastPhase ? "¡Último paso!" : "En edición",
-        tagBg: isLastPhase ? "#c8f0e0" : "#c8f0e0",
-        tagColor: isLastPhase ? "#0a3d2e" : "#0a3d2e",
+        tagBg: "#c8f0e0",
+        tagColor: "#0a3d2e",
         urgent: isLastPhase,
         navigate: "editing",
       })
     }
 
-    if (shorts.length > 0) {
+    if (shortsReady.length > 0) {
       suggestions.push({
-        id: "shorts",
+        id: "shorts-ready",
         icon: "📱",
-        title: `Extraer shorts de ${shorts.length} video${shorts.length > 1 ? "s" : ""}`,
-        sub:
-          shorts.length > 1
-            ? `El más reciente: ${getVodSourceName(shorts[0])}`
-            : getVodSourceName(shorts[0]),
-        tag: "Shorts pendientes",
+        title:
+          shortsReady.length === 1
+            ? `Empezar shorts — ${getVodSourceName(shortsReady[0])}`
+            : `${shortsReady.length} videos listos para hacer shorts`,
+        sub: "Indica cuántos shorts salieron para empezar a marcarlos",
+        tag: "Listo para shorts",
         tagBg: "#fad6e4",
         tagColor: "#5c0d2a",
+        urgent: false,
+        navigate: "shorts",
+      })
+    }
+
+    if (shortsProgress.length > 0) {
+      const total = shortsProgress.reduce(
+        (acc, v) => acc + (v.shortsCount ?? 0),
+        0,
+      )
+      const posted = shortsProgress.reduce(
+        (acc, v) => acc + (v.shortsPosted ?? 0),
+        0,
+      )
+      suggestions.push({
+        id: "shorts-progress",
+        icon: "⬆️",
+        title: `Subir shorts — ${posted}/${total} publicados`,
+        sub:
+          shortsProgress.length === 1
+            ? getVodSourceName(shortsProgress[0])
+            : `${shortsProgress.length} videos con shorts pendientes`,
+        tag: "En progreso",
+        tagBg: "#fad6e4",
+        tagColor: "#5c0d2a",
+        urgent: false,
+        navigate: "shorts",
+      })
+    }
+
+    if (shortsDone.length > 0) {
+      suggestions.push({
+        id: "shorts-done",
+        icon: "✅",
+        title: `${shortsDone.length} video${shortsDone.length > 1 ? "s" : ""} con todos los shorts subidos`,
+        sub: "Puedes moverlos a Para borrar y liberar espacio",
+        tag: "Ciclo completo",
+        tagBg: "#c8f0e0",
+        tagColor: "#0a3d2e",
         urgent: false,
         navigate: "shorts",
       })
@@ -56,7 +105,7 @@ export function useTodaySuggestions(buckets) {
         tagBg: inbox.length >= 5 ? "#fae0d4" : "#daeafa",
         tagColor: inbox.length >= 5 ? "#5c2010" : "#0d3a5c",
         urgent: inbox.length >= 5,
-        navigate: "inbox",
+        navigate: "content",
       })
     }
 
