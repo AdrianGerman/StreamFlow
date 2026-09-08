@@ -22,7 +22,7 @@ export default function ShortModal({
     initialData?.shortsPosted ?? 0,
   )
   const [date, setDate] = useState(
-    initialData?.date ?? new Date().toISOString().slice(0, 10),
+    initialData?.date ?? new Date().toLocaleDateString("en-CA"),
   )
   const [notes, setNotes] = useState(initialData?.notes ?? "")
   const [tags, setTags] = useState(initialData?.tags ?? ["short", "tiktok"])
