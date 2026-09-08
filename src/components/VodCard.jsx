@@ -130,7 +130,7 @@ export default function VodCard({
           <ShortsTracker
             vod={vod}
             onUpdate={(changes) => onUpdate(bucketId, vod.id, changes)}
-            onComplete={(extra) => onMove(vod.id, bucketId, "trash", extra)}
+            onComplete={() => onMove(vod.id, bucketId, "trash")}
           />
         )}
 

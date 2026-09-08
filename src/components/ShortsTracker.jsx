@@ -1,5 +1,6 @@
 import { useState } from "react"
 import ShortsModal from "./ShortsModal"
+import { playShortPosted, playAllShortsComplete } from "../utils/sounds"
 
 export default function ShortsTracker({ vod, onUpdate, onComplete }) {
   const [showModal, setShowModal] = useState(false)
@@ -22,8 +23,10 @@ export default function ShortsTracker({ vod, onUpdate, onComplete }) {
     } else {
       const next = index + 1
       if (next >= total) {
-        onComplete({ shortsPosted: next })
+        playAllShortsComplete()
+        onComplete()
       } else {
+        playShortPosted()
         onUpdate({ shortsPosted: next })
       }
     }
