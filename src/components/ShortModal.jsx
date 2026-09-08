@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { TAGS } from "../constants/tags"
+import { SOURCE_TYPES, inferSourceType } from "../constants/sourceTypes"
 import TagBadge from "./TagBadge"
 import CountSelector from "./CountSelector"
 import ModalShell, { ModalHeader, ModalBody, ModalFooter } from "./ModalShell"
@@ -11,6 +12,10 @@ export default function ShortModal({
   onClose,
 }) {
   const [title, setTitle] = useState(initialData?.title ?? "")
+  const [folderName, setFolderName] = useState(initialData?.folderName ?? "")
+  const [sourceType, setSourceType] = useState(() =>
+    inferSourceType(initialData),
+  )
   const [videoTitle, setVideoTitle] = useState(initialData?.videoTitle ?? "")
   const [shortsCount, setShortsCount] = useState(initialData?.shortsCount ?? 1)
   const [shortsPosted, setShortsPosted] = useState(
@@ -23,7 +28,11 @@ export default function ShortModal({
   const [tags, setTags] = useState(initialData?.tags ?? ["short", "tiktok"])
 
   const isEdit = mode === "edit"
-  const relevantTags = TAGS
+  const showFile = sourceType === "file" || sourceType === "both"
+  const showFolder = sourceType === "folder" || sourceType === "both"
+  const canSubmit =
+    (showFile ? !!title.trim() : true) &&
+    (showFolder ? !!folderName.trim() : true)
 
   const toggleTag = (id) =>
     setTags((prev) =>
@@ -31,10 +40,12 @@ export default function ShortModal({
     )
 
   const handleSubmit = () => {
-    if (!title.trim()) return
+    if (!canSubmit) return
     onConfirm({
-      title: title.trim(),
-      videoTitle: videoTitle.trim() || title.trim(),
+      title: showFile ? title.trim() : "",
+      folderName: showFolder ? folderName.trim() : "",
+      sourceType,
+      videoTitle: videoTitle.trim() || title.trim() || folderName.trim(),
       shortsCount,
       shortsPosted: Math.min(shortsPosted, shortsCount),
       date,
@@ -65,16 +76,60 @@ export default function ShortModal({
         accentColor="#be185d"
       />
       <ModalBody>
-        <Field label="Nombre del archivo / origen *">
-          <input
-            autoFocus
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="ej: stream_2024-06-22"
-            className={inputCls}
-            style={inputStyle}
-          />
+        <Field label="Tipo de origen">
+          <div className="flex gap-2">
+            {SOURCE_TYPES.map((st) => (
+              <button
+                key={st.id}
+                onClick={() => setSourceType(st.id)}
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border cursor-pointer transition-all duration-150"
+                style={{
+                  background:
+                    sourceType === st.id
+                      ? "var(--sf-primary-dim)"
+                      : "var(--code-bg)",
+                  borderColor:
+                    sourceType === st.id
+                      ? "var(--sf-primary)"
+                      : "var(--border)",
+                  color:
+                    sourceType === st.id
+                      ? "var(--sf-edit-text)"
+                      : "var(--text)",
+                }}
+              >
+                <span>{st.icon}</span>
+                <span className="text-[12px] font-medium">{st.label}</span>
+              </button>
+            ))}
+          </div>
         </Field>
+
+        {showFile && (
+          <Field label="Nombre del archivo *">
+            <input
+              autoFocus={showFile}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="ej: stream_2024-06-22"
+              className={inputCls}
+              style={inputStyle}
+            />
+          </Field>
+        )}
+
+        {showFolder && (
+          <Field label="Nombre de la carpeta *">
+            <input
+              autoFocus={!showFile}
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+              placeholder="ej: 22 de junio — Ranked"
+              className={inputCls}
+              style={inputStyle}
+            />
+          </Field>
+        )}
 
         <Field label="Título del video">
           <input
@@ -124,7 +179,7 @@ export default function ShortModal({
 
         <Field label="Tipo de contenido">
           <div className="flex gap-2 flex-wrap">
-            {relevantTags.map((tag) => (
+            {TAGS.map((tag) => (
               <button
                 key={tag.id}
                 onClick={() => toggleTag(tag.id)}
@@ -164,7 +219,7 @@ export default function ShortModal({
         </button>
         <button
           onClick={handleSubmit}
-          disabled={!title.trim()}
+          disabled={!canSubmit}
           className="flex-1 py-2.5 rounded-lg text-[13px] font-semibold cursor-pointer border-none text-white disabled:opacity-40"
           style={{ background: "var(--sf-primary)" }}
         >
