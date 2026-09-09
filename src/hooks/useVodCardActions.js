@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { playCycleComplete } from "../utils/sounds"
+import { playCycleComplete, playAllShortsComplete } from "../utils/sounds"
 
 export function useVodCardActions({ vod, bucketId, onMove, onRemove }) {
   const [hovered, setHovered] = useState(false)
@@ -16,11 +16,13 @@ export function useVodCardActions({ vod, bucketId, onMove, onRemove }) {
       setConfirming(true)
       return
     }
+    playCycleComplete()
     onRemove(bucketId, vod.id)
   }
 
   const handleMove = (destId) => {
     if (destId === "trash" && bucketId === "shorts") playCycleComplete()
+    if (destId === "shorts") playAllShortsComplete()
     onMove(vod.id, bucketId, destId)
   }
 
