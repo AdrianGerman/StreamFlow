@@ -12,6 +12,7 @@ export default function ShortsTracker({ vod, onUpdate, onComplete }) {
   const allDone = total > 0 && posted >= total
 
   const handleStartShorts = (count) => {
+    playAllShortsComplete()
     onUpdate({ shortsCount: count, shortsPosted: 0, shortsReady: true })
     setShowModal(false)
   }

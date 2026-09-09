@@ -1,7 +1,18 @@
 import { PHASES, TOTAL_PHASES } from "../constants/phases"
+import { playShortPosted, playAllShortsComplete } from "../utils/sounds"
 
 export default function PhaseBar({ phase, onAdvance, onRegress }) {
   const currentPhase = PHASES.find((p) => p.id === phase)
+
+  const handleAdvance = () => {
+    if (phase >= TOTAL_PHASES) return
+    if (phase + 1 === TOTAL_PHASES) {
+      playAllShortsComplete()
+    } else {
+      playShortPosted()
+    }
+    onAdvance()
+  }
 
   return (
     <div className="mt-3">
@@ -39,7 +50,7 @@ export default function PhaseBar({ phase, onAdvance, onRegress }) {
               title="Fase anterior"
             />
             <PhaseBtn
-              onClick={onAdvance}
+              onClick={handleAdvance}
               disabled={phase >= TOTAL_PHASES}
               symbol="→"
               title="Siguiente fase"
