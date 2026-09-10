@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { playCycleComplete } from "../utils/sounds"
 import ActionBtn from "./ActionBtn"
 import TagBadge from "./TagBadge"
 import SourceOrigin from "./SourceOrigin"
@@ -16,6 +17,7 @@ export default function TrashCard({ vod, onRemove }) {
       setConfirming(true)
       return
     }
+    playCycleComplete()
     onRemove("trash", vod.id)
   }
 
@@ -51,7 +53,10 @@ export default function TrashCard({ vod, onRemove }) {
             className="text-[11px]"
             style={{ color: "var(--sf-trash-text)" }}
           >
-            {new Date(vod.completedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short" })}
+            {new Date(vod.completedAt).toLocaleDateString("es-ES", {
+              day: "numeric",
+              month: "short",
+            })}
           </span>
         )}
       </div>
