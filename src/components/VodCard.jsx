@@ -17,6 +17,7 @@ export default function VodCard({
   onRegress,
   onRemove,
   onUpdate,
+  onCelebrate,
 }) {
   const {
     hovered,
@@ -131,6 +132,7 @@ export default function VodCard({
             vod={vod}
             onUpdate={(changes) => onUpdate(bucketId, vod.id, changes)}
             onComplete={() => onMove(vod.id, bucketId, "trash")}
+            onCelebrate={onCelebrate}
           />
         )}
 

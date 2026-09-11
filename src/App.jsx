@@ -2,6 +2,7 @@ import { useState } from "react"
 import { TABS } from "./constants/nav"
 import { useVodStore } from "./store/vodStore"
 import { useActiveTab } from "./hooks/useActiveTab"
+import { useConfetti } from "./hooks/useConfetti"
 import HomeView from "./views/HomeView"
 import ContentView from "./views/ContentView"
 import IdeasView from "./views/IdeasView"
@@ -10,7 +11,7 @@ import ShortsView from "./views/ShortsView"
 import TrashView from "./views/TrashView"
 import HistoryView from "./views/HistoryView"
 import DataManager from "./components/DataManager"
-
+import Confetti from "./components/Confetti"
 import HomeIcon from "./icon/HomeIcon"
 
 function tabCount(tab, buckets) {
@@ -31,6 +32,7 @@ export default function App() {
     reorderVods,
   } = useVodStore()
   const [showDataManager, setShowDataManager] = useState(false)
+  const { showConfetti, triggerConfetti } = useConfetti()
 
   const view = () => {
     switch (activeTab) {
@@ -84,6 +86,7 @@ export default function App() {
             moveVod={moveVod}
             removeVod={removeVod}
             reorderVods={reorderVods}
+            onCelebrate={triggerConfetti}
           />
         )
       case "trash":
@@ -93,6 +96,7 @@ export default function App() {
             buckets={buckets}
             updateVod={updateVod}
             removeVod={removeVod}
+            onCelebrate={triggerConfetti}
           />
         )
       case "history":
@@ -206,6 +210,7 @@ export default function App() {
       {showDataManager && (
         <DataManager onClose={() => setShowDataManager(false)} />
       )}
+      {showConfetti && <Confetti />}
     </div>
   )
 }

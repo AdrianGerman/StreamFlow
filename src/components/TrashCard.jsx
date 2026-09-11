@@ -6,7 +6,7 @@ import SourceOrigin from "./SourceOrigin"
 import { CONTENT_TYPE_MAP } from "../constants/contentTypes"
 import { formatDate } from "../utils/date"
 
-export default function TrashCard({ vod, onRemove }) {
+export default function TrashCard({ vod, onRemove, onCelebrate }) {
   const [hovered, setHovered] = useState(false)
   const [confirming, setConfirming] = useState(false)
 
@@ -18,6 +18,7 @@ export default function TrashCard({ vod, onRemove }) {
       return
     }
     playCycleComplete()
+    onCelebrate?.()
     onRemove("trash", vod.id)
   }
 

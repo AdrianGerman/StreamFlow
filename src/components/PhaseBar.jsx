@@ -1,13 +1,14 @@
 import { PHASES, TOTAL_PHASES } from "../constants/phases"
 import { playShortPosted, playAllShortsComplete } from "../utils/sounds"
 
-export default function PhaseBar({ phase, onAdvance, onRegress }) {
+export default function PhaseBar({ phase, onAdvance, onRegress, onCelebrate }) {
   const currentPhase = PHASES.find((p) => p.id === phase)
 
   const handleAdvance = () => {
     if (phase >= TOTAL_PHASES) return
     if (phase + 1 === TOTAL_PHASES) {
       playAllShortsComplete()
+      onCelebrate?.()
     } else {
       playShortPosted()
     }

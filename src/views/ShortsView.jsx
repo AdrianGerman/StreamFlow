@@ -18,6 +18,7 @@ export default function ShortsView({
   moveVod,
   removeVod,
   reorderVods,
+  onCelebrate,
 }) {
   const [showCreate, setShowCreate] = useState(false)
   const [editingVod, setEditingVod] = useState(null)
@@ -111,6 +112,7 @@ export default function ShortsView({
                 onRemove={removeVod}
                 onUpdate={updateVod}
                 onEdit={(v) => setEditingVod({ ...v })}
+                onCelebrate={onCelebrate}
               />
             </div>
           ))}
