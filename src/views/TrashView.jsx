@@ -1,19 +1,15 @@
-import { useMemo } from "react"
 import ViewHeader from "../components/ViewHeader"
 import EmptyState from "../components/EmptyState"
 import TrashCard from "../components/TrashCard"
 
-export default function TrashView({ buckets, removeVod }) {
+export default function TrashView({ buckets, removeVod, onCelebrate }) {
   const vods = buckets.trash ?? []
 
-  const stats = useMemo(
-    () => ({
-      total: vods.length,
-      shortsTotal: vods.reduce((acc, v) => acc + (v.shortsCount ?? 0), 0),
-      shortsPosted: vods.reduce((acc, v) => acc + (v.shortsPosted ?? 0), 0),
-    }),
-    [vods],
-  )
+  const stats = {
+    total: vods.length,
+    shortsTotal: vods.reduce((acc, v) => acc + (v.shortsCount ?? 0), 0),
+    shortsPosted: vods.reduce((acc, v) => acc + (v.shortsPosted ?? 0), 0),
+  }
 
   return (
     <>
@@ -56,7 +52,12 @@ export default function TrashView({ buckets, removeVod }) {
 
           <div className="flex flex-col gap-2.5">
             {vods.map((vod) => (
-              <TrashCard key={vod.id} vod={vod} onRemove={removeVod} />
+              <TrashCard
+                key={vod.id}
+                vod={vod}
+                onRemove={removeVod}
+                onCelebrate={onCelebrate}
+              />
             ))}
           </div>
         </>
