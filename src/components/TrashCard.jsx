@@ -6,7 +6,7 @@ import SourceOrigin from "./SourceOrigin"
 import { CONTENT_TYPE_MAP } from "../constants/contentTypes"
 import { formatDate } from "../utils/date"
 
-export default function TrashCard({ vod, onRemove, onCelebrate }) {
+export default function TrashCard({ vod, onArchive, onCelebrate }) {
   const [hovered, setHovered] = useState(false)
   const [confirming, setConfirming] = useState(false)
 
@@ -19,7 +19,7 @@ export default function TrashCard({ vod, onRemove, onCelebrate }) {
     }
     playCycleComplete()
     onCelebrate?.()
-    onRemove("trash", vod.id)
+    onArchive(vod.id)
   }
 
   return (
@@ -118,8 +118,8 @@ export default function TrashCard({ vod, onRemove, onCelebrate }) {
           >
             <ActionBtn onClick={handleRemove} danger={confirming} fullWidth>
               {confirming
-                ? "¿Confirmar eliminación?"
-                : "🗑 Eliminar de StreamFlow"}
+                ? "¿Ya borraste el archivo de tu PC?"
+                : "✅ Archivo borrado de mi PC"}
             </ActionBtn>
           </div>
         )}

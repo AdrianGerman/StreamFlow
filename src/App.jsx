@@ -30,6 +30,7 @@ export default function App() {
     regressPhase,
     removeVod,
     reorderVods,
+    archiveVod,
   } = useVodStore()
   const [showDataManager, setShowDataManager] = useState(false)
   const { showConfetti, triggerConfetti } = useConfetti()
@@ -97,6 +98,7 @@ export default function App() {
             buckets={buckets}
             updateVod={updateVod}
             removeVod={removeVod}
+            archiveVod={archiveVod}
             onCelebrate={triggerConfetti}
           />
         )
