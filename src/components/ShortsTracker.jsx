@@ -32,7 +32,7 @@ export default function ShortsTracker({
       if (next >= total) {
         playAllShortsComplete()
         onCelebrate?.()
-        onComplete()
+        onComplete({ shortsPosted: next })
       } else {
         playShortPosted()
         onUpdate({ shortsPosted: next })

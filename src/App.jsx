@@ -74,6 +74,7 @@ export default function App() {
             regressPhase={regressPhase}
             removeVod={removeVod}
             reorderVods={reorderVods}
+            onCelebrate={triggerConfetti}
           />
         )
       case "shorts":

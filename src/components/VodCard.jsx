@@ -124,6 +124,7 @@ export default function VodCard({
             phase={vod.phase}
             onAdvance={() => onAdvance?.(vod.id, vod.phase)}
             onRegress={() => onRegress?.(vod.id, vod.phase)}
+            onCelebrate={onCelebrate}
           />
         )}
 
@@ -131,7 +132,7 @@ export default function VodCard({
           <ShortsTracker
             vod={vod}
             onUpdate={(changes) => onUpdate(bucketId, vod.id, changes)}
-            onComplete={() => onMove(vod.id, bucketId, "trash")}
+            onComplete={(extra) => onMove(vod.id, bucketId, "trash", extra)}
             onCelebrate={onCelebrate}
           />
         )}

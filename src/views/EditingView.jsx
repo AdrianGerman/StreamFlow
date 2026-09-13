@@ -15,6 +15,7 @@ export default function EditingView({
   regressPhase,
   removeVod,
   reorderVods,
+  onCelebrate,
 }) {
   return (
     <BucketView
@@ -31,6 +32,7 @@ export default function EditingView({
       onReorder={reorderVods}
       onAdvance={(vodId, phase) => advancePhase(vodId, phase, TOTAL_PHASES)}
       onRegress={regressPhase}
+      onCelebrate={onCelebrate}
     >
       <div className="flex gap-2 mb-5 flex-wrap">
         {PHASES.map((p) => (

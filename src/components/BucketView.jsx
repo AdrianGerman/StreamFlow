@@ -25,6 +25,7 @@ export default function BucketView({
   onReorder = null,
   onAdvance = null,
   onRegress = null,
+  onCelebrate = null,
   children,
 }) {
   const [showCreate, setShowCreate] = useState(false)
@@ -120,6 +121,7 @@ export default function BucketView({
                 onUpdate={onUpdate}
                 onAdvance={onAdvance}
                 onRegress={onRegress}
+                onCelebrate={onCelebrate}
               />
             </div>
           ))}
