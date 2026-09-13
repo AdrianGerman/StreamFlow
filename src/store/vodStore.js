@@ -3,28 +3,10 @@ import { STORE_KEYS } from "../constants/nav"
 
 const STORAGE_KEY = "streamflow:vods"
 
-function repairIncompleteLastShort(state) {
-  const trash = state.trash
-  if (!Array.isArray(trash)) return state
-  let changed = false
-  const nextTrash = trash.map((v) => {
-    const count = v.shortsCount ?? 0
-    const posted = v.shortsPosted ?? 0
-    if (count > 0 && posted === count - 1) {
-      changed = true
-      return { ...v, shortsPosted: count }
-    }
-    return v
-  })
-  return changed ? { ...state, trash: nextTrash } : state
-}
-
 function loadFromStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw)
-    return parsed ? repairIncompleteLastShort(parsed) : null
+    return raw ? JSON.parse(raw) : null
   } catch {
     return null
   }
@@ -68,8 +50,6 @@ function generateId() {
  */
 export function createVod({
   title = "",
-  folderName = "",
-  sourceType = "file",
   videoTitle = "",
   contentType = "stream",
   duration = "",
@@ -87,8 +67,6 @@ export function createVod({
   return {
     id: generateId(),
     title,
-    folderName,
-    sourceType,
     videoTitle,
     contentType,
     duration,
@@ -186,6 +164,17 @@ export function useVodStore() {
     })
   }, [])
 
+  const archiveVod = useCallback((vodId) => {
+    setBuckets((prev) => ({
+      ...prev,
+      trash: prev.trash.map((v) =>
+        v.id === vodId
+          ? { ...v, archived: true, archivedAt: new Date().toISOString() }
+          : v,
+      ),
+    }))
+  }, [])
+
   return {
     buckets,
     addVod,
@@ -195,5 +184,6 @@ export function useVodStore() {
     regressPhase,
     removeVod,
     reorderVods,
+    archiveVod,
   }
 }
