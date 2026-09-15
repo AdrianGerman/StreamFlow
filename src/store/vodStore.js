@@ -63,6 +63,7 @@ export function createVod({
   shortsReady = false,
   vodRef = "",
   moments = [],
+  sources = [],
 }) {
   return {
     id: generateId(),
@@ -80,6 +81,7 @@ export function createVod({
     shortsReady,
     vodRef,
     moments,
+    sources,
     phase: 1,
     createdAt: new Date().toISOString(),
     completedAt: null,
