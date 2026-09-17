@@ -3,6 +3,7 @@ import { TAGS } from "../constants/tags"
 import { CONTENT_TYPES } from "../constants/contentTypes"
 import TagBadge from "./TagBadge"
 import ModalShell, { ModalHeader, ModalBody, ModalFooter } from "./ModalShell"
+import { createSource, normalizeSources } from "../utils/ideaSources"
 
 export default function IdeaModal({
   mode = "create",
@@ -10,17 +11,16 @@ export default function IdeaModal({
   onConfirm,
   onClose,
 }) {
-  const [vodRef, setVodRef] = useState(initialData?.vodRef ?? "")
   const [videoTitle, setVideoTitle] = useState(initialData?.videoTitle ?? "")
   const [contentType, setContentType] = useState(
     initialData?.contentType ?? "stream",
   )
   const [notes, setNotes] = useState(initialData?.notes ?? "")
-  const [moments, setMoments] = useState(initialData?.moments ?? [""])
   const [tags, setTags] = useState(initialData?.tags ?? [])
   const [date, setDate] = useState(
-    initialData?.date ?? new Date().toISOString().slice(0, 10),
+    initialData?.date ?? new Date().toLocaleDateString("en-CA"),
   )
+  const [sources, setSources] = useState(() => normalizeSources(initialData))
 
   const isEdit = mode === "edit"
 
@@ -28,24 +28,67 @@ export default function IdeaModal({
     setTags((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id],
     )
-  const updateMoment = (i, val) =>
-    setMoments((prev) => prev.map((m, idx) => (idx === i ? val : m)))
-  const addMoment = () => setMoments((prev) => [...prev, ""])
-  const removeMoment = (i) =>
-    setMoments((prev) =>
-      prev.length === 1 ? [""] : prev.filter((_, idx) => idx !== i),
+
+  const addSource = () => setSources((prev) => [...prev, createSource()])
+
+  const removeSource = (id) =>
+    setSources((prev) =>
+      prev.length === 1 ? prev : prev.filter((s) => s.id !== id),
+    )
+
+  const updateSourceRef = (id, vodRef) =>
+    setSources((prev) => prev.map((s) => (s.id === id ? { ...s, vodRef } : s)))
+
+  const addMoment = (sourceId) =>
+    setSources((prev) =>
+      prev.map((s) =>
+        s.id === sourceId ? { ...s, moments: [...s.moments, ""] } : s,
+      ),
+    )
+
+  const updateMoment = (sourceId, i, val) =>
+    setSources((prev) =>
+      prev.map((s) =>
+        s.id === sourceId
+          ? { ...s, moments: s.moments.map((m, idx) => (idx === i ? val : m)) }
+          : s,
+      ),
+    )
+
+  const removeMoment = (sourceId, i) =>
+    setSources((prev) =>
+      prev.map((s) =>
+        s.id === sourceId
+          ? {
+              ...s,
+              moments:
+                s.moments.length === 1
+                  ? [""]
+                  : s.moments.filter((_, idx) => idx !== i),
+            }
+          : s,
+      ),
     )
 
   const handleSubmit = () => {
     if (!videoTitle.trim()) return
+    const cleanSources = sources
+      .map((s) => ({
+        ...s,
+        vodRef: s.vodRef.trim(),
+        moments: s.moments.map((m) => m.trim()).filter(Boolean),
+      }))
+      .filter((s) => s.vodRef || s.moments.length > 0)
+
     onConfirm({
-      vodRef: vodRef.trim(),
       videoTitle: videoTitle.trim(),
       contentType,
       notes: notes.trim(),
-      moments: moments.map((m) => m.trim()).filter(Boolean),
       tags,
       date,
+      sources: cleanSources,
+      vodRef: cleanSources[0]?.vodRef ?? "",
+      moments: cleanSources[0]?.moments ?? [],
     })
   }
 
@@ -59,7 +102,7 @@ export default function IdeaModal({
     "w-full text-[13px] rounded-lg border outline-none font-[inherit] transition-colors duration-150"
 
   return (
-    <ModalShell onClose={onClose}>
+    <ModalShell onClose={onClose} width={480}>
       <ModalHeader
         title={isEdit ? "Editar idea" : "Nueva idea"}
         sub="Plasma la idea antes de organizarla en el flujo."
@@ -95,22 +138,11 @@ export default function IdeaModal({
           </div>
         </Field>
 
-        <Field label="VOD de origen">
-          <input
-            value={vodRef}
-            onChange={(e) => setVodRef(e.target.value)}
-            placeholder="ej: Stream del 30 jul — ranked"
-            className={inputCls}
-            style={inputStyle}
-          />
-        </Field>
-
         <Field label="Idea del video *">
           <input
             autoFocus
             value={videoTitle}
             onChange={(e) => setVideoTitle(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="ej: Las 3 victorias con la skin de Spiderman"
             className={inputCls}
             style={inputStyle}
@@ -127,43 +159,106 @@ export default function IdeaModal({
           />
         </Field>
 
-        <Field label="Momentos / clips destacados">
-          <div className="flex flex-col gap-2">
-            {moments.map((m, i) => (
-              <div key={i} className="flex gap-2 items-center">
-                <input
-                  value={m}
-                  onChange={(e) => updateMoment(i, e.target.value)}
-                  placeholder="ej: Headshot triple en el minuto 42"
-                  className={`${inputCls} flex-1`}
-                  style={inputStyle}
-                />
-                <button
-                  onClick={() => removeMoment(i)}
-                  className="text-[12px] px-2 py-1.5 rounded-lg border cursor-pointer"
-                  style={{
-                    borderColor: "var(--border)",
-                    color: "var(--text)",
-                    background: "var(--bg)",
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
+        <div className="mb-3">
+          <div className="flex items-center justify-between mb-2">
+            <label
+              className="text-[11px] font-semibold"
+              style={{ color: "var(--text)" }}
+            >
+              VODs de origen
+            </label>
             <button
-              onClick={addMoment}
-              className="text-[12px] font-medium py-1.5 rounded-lg border border-dashed cursor-pointer transition-colors hover:border-(--sf-primary)"
+              onClick={addSource}
+              className="text-[11px] font-medium px-2.5 py-1 rounded-lg border-none cursor-pointer transition-opacity hover:opacity-70"
               style={{
-                borderColor: "var(--border)",
-                color: "var(--text)",
-                background: "transparent",
+                background: "var(--sf-primary-dim)",
+                color: "var(--sf-edit-text)",
               }}
             >
-              + Agregar momento
+              + Agregar VOD
             </button>
           </div>
-        </Field>
+
+          <div className="flex flex-col gap-3">
+            {sources.map((source, si) => (
+              <div
+                key={source.id}
+                className="rounded-xl p-3"
+                style={{
+                  background: "var(--code-bg)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span
+                    className="text-[11px] font-semibold"
+                    style={{ color: "var(--text)" }}
+                  >
+                    VOD {si + 1}
+                  </span>
+                  {sources.length > 1 && (
+                    <button
+                      onClick={() => removeSource(source.id)}
+                      className="ml-auto text-[11px] cursor-pointer border-none bg-transparent transition-opacity hover:opacity-70"
+                      style={{ color: "var(--danger)" }}
+                    >
+                      ✕ Quitar
+                    </button>
+                  )}
+                </div>
+
+                <input
+                  value={source.vodRef}
+                  onChange={(e) => updateSourceRef(source.id, e.target.value)}
+                  placeholder="ej: Stream del 30 jul — ranked"
+                  className={`${inputCls} mb-2`}
+                  style={{ ...inputStyle, background: "var(--bg)" }}
+                />
+
+                <div className="flex flex-col gap-1.5">
+                  {source.moments.map((m, i) => (
+                    <div key={i} className="flex gap-2 items-center">
+                      <input
+                        value={m}
+                        onChange={(e) =>
+                          updateMoment(source.id, i, e.target.value)
+                        }
+                        placeholder="ej: Headshot triple en el minuto 42"
+                        className={`${inputCls} flex-1`}
+                        style={{
+                          ...inputStyle,
+                          background: "var(--bg)",
+                          padding: "5px 8px",
+                        }}
+                      />
+                      <button
+                        onClick={() => removeMoment(source.id, i)}
+                        className="text-[11px] px-1.5 py-1 rounded cursor-pointer border-none"
+                        style={{
+                          background: "var(--border)",
+                          color: "var(--text)",
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => addMoment(source.id)}
+                    className="text-[11px] font-medium py-1 rounded-lg border border-dashed cursor-pointer transition-colors hover:border-(--sf-primary) text-left px-2"
+                    style={{
+                      borderColor: "var(--border)",
+                      color: "var(--text)",
+                      background: "transparent",
+                    }}
+                  >
+                    + Agregar momento
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <Field label="Notas adicionales">
           <textarea
